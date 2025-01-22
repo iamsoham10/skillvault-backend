@@ -13,4 +13,10 @@ const createUserController = asyncHandler(async (req, res) => {
   res.status(201).json({ success: true, message: "User created successfully" });
 });
 
-module.exports = { getUserController, createUserController };
+const loginUserController = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const newToken = await userService.loginUser({ email, password });
+  res.status(200).json({ success: true, message: "User logged in successfully", token: newToken });
+});
+
+module.exports = { getUserController, createUserController, loginUserController };
