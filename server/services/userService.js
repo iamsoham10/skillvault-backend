@@ -11,17 +11,19 @@ const getUser = async (user_id) => {
 };
 
 const createUser = async ({ username, email, password }) => {
-  const userExist = await User.findOne({ email });
+  const userExist = await User.findOne({ email }).select("user_id");
   if (userExist) {
     throw new Error("User already exists");
   }
-  const saltValue = 11;
-  const finalHashedPassword = await bcrypt.hash(password, saltValue);
+  const [hashedPassword, user_id] = await Promise.all([
+    bcrypt.hash(password, 10),
+    uuid4(),
+  ]);
   const newUser = new User({
     username,
     email,
-    password: finalHashedPassword,
-    user_id: uuid4(),
+    password: hashedPassword,
+    user_id,
   });
   await newUser.save();
   return newUser;

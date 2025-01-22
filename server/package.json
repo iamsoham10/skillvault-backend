@@ -18,6 +18,6 @@
   "license": "ISC",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "bun run --hot server/index.js"
+    "start": "bun run --hot index.js"
   }
 }
