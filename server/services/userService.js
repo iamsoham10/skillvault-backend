@@ -2,6 +2,10 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { v4: uuid4 } = require("uuid");
 const jwt = require("jsonwebtoken");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../services/tokenService");
 
 const getUser = async (user_id) => {
   const user = await User.findOne({ user_id: user_id });
@@ -31,25 +35,33 @@ const createUser = async ({ username, email, password }) => {
 };
 
 const loginUser = async ({ email, password }) => {
-  const userExist = await User.findOne({ email });
-  if (!userExist) {
-    throw new Error("User not found");
-  }
-  const isPassValid = await bcrypt.compare(password, userExist.password);
-  if (!isPassValid) {
-    throw new Error("Invalid password");
-  }
+  try {
+    const userExist = await User.findOne({ email }).select(
+      "+refreshToken +lastLogin"
+    );
+    if (!userExist) {
+      throw new Error("User not found");
+    }
+    const isPassValid = await bcrypt.compare(password, userExist.password);
+    if (!isPassValid) {
+      throw new Error("Invalid password");
+    }
+    const accessToken = generateAccessToken(userExist);
+    const refreshToken = generateRefreshToken(userExist);
 
-  const token = jwt.sign(
-    {
-      user_id: userExist.user_id,
-      email: userExist.email,
-      password: userExist.password,
-    },
-    process.env.SECRET_KEY,
-    {expiresIn: "12h"}
-  );
-  return token;
+    userExist.refreshToken = refreshToken;
+    userExist.lastLogin = Date.now();
+    await userExist.save();
+    return {
+      user: userExist,
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
+    };
+  } catch (err) {
+    throw new Error("Authentication failed");
+  }
 };
 
 module.exports = { getUser, createUser, loginUser };

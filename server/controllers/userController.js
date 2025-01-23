@@ -1,4 +1,5 @@
 const userService = require("../services/userService");
+const tokenService = require("../services/tokenService");
 const asyncHandler = require("express-async-handler");
 
 const getUserController = asyncHandler(async (req, res) => {
@@ -16,7 +17,13 @@ const createUserController = asyncHandler(async (req, res) => {
 const loginUserController = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const newToken = await userService.loginUser({ email, password });
-  res.status(200).json({ success: true, message: "User logged in successfully", token: newToken });
+  res.status(200).json({ success: true, message: "User logged in successfully", data: newToken });
 });
 
-module.exports = { getUserController, createUserController, loginUserController };
+const refreshTokenController = asyncHandler(async (req, res) => {
+  const {refreshToken} = req.body;
+  const newAccessToken = await tokenService.refreshAccessToken({refreshToken});
+  res.status(200).json({success: true, message: "New Access token genereated", newAccessToken});
+});
+
+module.exports = { getUserController, createUserController, loginUserController, refreshTokenController };

@@ -22,6 +22,14 @@ const userSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    refreshToken: {
+      type: String,
+      select: false,
+    },
+    lastLogin: {
+      type: Date,
+      select: false,
+    },
   },
   {
     timestamps: false,
