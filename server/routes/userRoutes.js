@@ -1,12 +1,10 @@
 const express = require("express");
 const router = express.Router();
-// const { getUserController } = require("../controllers/userController");
-// const { createUserController } = require("../controllers/userController");
-// const { loginUserController } = require("../controllers/userController");
 const authControllers = require("../controllers/userController");
+const inputValidator = require("../middlewares/inputValidator");
 
-router.get("/user/:user_id", authControllers.getUserController);
-router.post("/register", authControllers.createUserController);
+router.get("/user/:user_id", inputValidator.checkParam, authControllers.getUserController);
+router.post("/register", inputValidator.checkInput, authControllers.createUserController);
 router.post("/login", authControllers.loginUserController);
 router.post("/refresh-token", authControllers.refreshTokenController);
 router.put("/user/:id");
