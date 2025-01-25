@@ -20,6 +20,14 @@ const createUser = async ({ username, email, password }) => {
   if (userExist) {
     throw new Error("User already exists");
   }
+  // take the email from request body and send to user validation service //
+  // in the user validation service take the email as a parameter
+  // in the user validation generate a random 4/6 digit otp //
+  // make sure the same otp is not generated twice //
+  // store the otp in the database //
+  // send an email to the email id of user, containing the otp
+  // make sure the email doesn't go to span folder
+  // make the otp valid only for 2 minutes
   const [hashedPassword, user_id] = await Promise.all([
     bcrypt.hash(password, 10),
     uuid4(),

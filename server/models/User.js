@@ -21,6 +21,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       ref: "User",
       required: true,
+      unique: true,
+      index: true
     },
     refreshToken: {
       type: String,
@@ -30,6 +32,10 @@ const userSchema = new mongoose.Schema(
       type: Date,
       select: false,
     },
+    otp: {
+      type: Number,
+      select: false,
+    }
   },
   {
     timestamps: false,
