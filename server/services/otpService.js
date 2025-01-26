@@ -6,15 +6,13 @@ const otpGenerator = () => {
   return otp;
 };
 
-console.log(otpGenerator());
-
-const validateEmail = async ({ email }) => {
+const saveOTP = async (email) => {
   try {
     const userToValidate = await User.findOne({ email }).select("user_id");
     if (!userToValidate) {
       throw new Error("Invalid user");
     }
-    userOTP = otpGenerator();
+    const userOTP = otpGenerator();
     userToValidate.otp = userOTP;
     await userToValidate.save();
     return userToValidate;
@@ -23,4 +21,4 @@ const validateEmail = async ({ email }) => {
   }
 };
 
-module.exports = { validateEmail };
+module.exports = { saveOTP };

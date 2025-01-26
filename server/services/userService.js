@@ -2,10 +2,9 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const { v4: uuid4 } = require("uuid");
 const jwt = require("jsonwebtoken");
-const {
-  generateAccessToken,
-  generateRefreshToken,
-} = require("../services/tokenService");
+const genOTP = require("./otpService");
+const sendEmail = require('./emailService');
+const { generateAccessToken,generateRefreshToken } = require("../services/tokenService");
 
 const getUser = async (user_id) => {
   const user = await User.findOne({ user_id: user_id });
@@ -16,18 +15,11 @@ const getUser = async (user_id) => {
 };
 
 const createUser = async ({ username, email, password }) => {
-  const userExist = await User.findOne({ email }).select("user_id");
+  try {
+    const userExist = await User.findOne({ email }).select("user_id");
   if (userExist) {
     throw new Error("User already exists");
   }
-  // take the email from request body and send to user validation service //
-  // in the user validation service take the email as a parameter
-  // in the user validation generate a random 4/6 digit otp //
-  // make sure the same otp is not generated twice //
-  // store the otp in the database //
-  // send an email to the email id of user, containing the otp
-  // make sure the email doesn't go to span folder
-  // make the otp valid only for 2 minutes
   const [hashedPassword, user_id] = await Promise.all([
     bcrypt.hash(password, 10),
     uuid4(),
@@ -38,8 +30,26 @@ const createUser = async ({ username, email, password }) => {
     password: hashedPassword,
     user_id,
   });
+  // save the user without otp
   await newUser.save();
-  return newUser;
+  // generate and save otp
+  // take the email and otp from the db and send to email service to send email
+  const emailOTPUser = await genOTP.saveOTP(newUser.email);
+  setImmediate( async () => {
+    try{
+      await sendEmail.sendOTPEmail(newUser.email, emailOTPUser.otp);
+    } catch(err){
+      console.error('Error sending email in background: ', err);
+    }
+  });
+  return {
+    OTPCode: {
+      emailOTPUser,
+    },
+  }
+  } catch(err) {
+    throw new Error("User creation failed");
+  }
 };
 
 const loginUser = async ({ email, password }) => {
