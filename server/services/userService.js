@@ -33,11 +33,11 @@ const createUser = async ({ username, email, password }) => {
   // save the user without otp
   await newUser.save();
   // generate and save otp
-  // take the email and otp from the db and send to email service to send email
   const emailOTPUser = await genOTP.saveOTP(newUser.email);
+  // take the email and otp from the db and send to email service to send email
   setImmediate( async () => {
     try{
-      await sendEmail.sendOTPEmail(newUser.email, emailOTPUser.otp);
+      await sendEmail.sendOTPEmail(newUser.email, emailOTPUser);
     } catch(err){
       console.error('Error sending email in background: ', err);
     }
@@ -49,6 +49,23 @@ const createUser = async ({ username, email, password }) => {
   }
   } catch(err) {
     throw new Error("User creation failed");
+  }
+};
+
+const verifyOTP = async (email, otp) => {
+  console.log(email, otp);
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    const userOTP = await genOTP.validateOTP(email, otp);
+    if (!userOTP) {
+      throw new Error("Invalid OTP");
+    }
+    return user;
+  } catch (err) {
+    throw new Error("OTP verification failed");
   }
 };
 
@@ -82,4 +99,4 @@ const loginUser = async ({ email, password }) => {
   }
 };
 
-module.exports = { getUser, createUser, loginUser };
+module.exports = { getUser, createUser, verifyOTP, loginUser };

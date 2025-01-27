@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const client = require('../config/redisClient');
 
 // function to generate random 4/6 digit otp
 const otpGenerator = () => {
@@ -13,12 +14,32 @@ const saveOTP = async (email) => {
       throw new Error("Invalid user");
     }
     const userOTP = otpGenerator();
-    userToValidate.otp = userOTP;
-    await userToValidate.save();
-    return userToValidate;
+    const expirationTimeInSeconds = 120;
+    // store otp in redis with expiration
+    await client.set(email, userOTP, "EX", expirationTimeInSeconds);
+    // userToValidate.otp = userOTP;
+    // await userToValidate.save();
+    return userOTP;
   } catch (err) {
-    throw new Error("OTP validation failed");
+    throw new Error("Error saving OTP to Redis");
   }
 };
 
-module.exports = { saveOTP };
+const validateOTP = async (email, otp) => {
+  try{
+    // get otp from redis
+    const storedOTP = await client.get(email);
+    if(!storedOTP){
+      throw new Error("OTP expired");
+    }
+    if(storedOTP !== otp){
+      throw new Error('Invalid OTP');
+    }
+    await client.del(email);
+    return true;
+  } catch(err){
+    throw new Error('Error validating OTP');
+  }
+}
+
+module.exports = { saveOTP, validateOTP };

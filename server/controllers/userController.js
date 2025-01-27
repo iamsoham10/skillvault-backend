@@ -23,7 +23,13 @@ const loginUserController = asyncHandler(async (req, res) => {
 const refreshTokenController = asyncHandler(async (req, res) => {
   const {refreshToken} = req.body;
   const newAccessToken = await tokenService.refreshAccessToken({refreshToken});
-  res.status(200).json({success: true, message: "New Access token genereated", newAccessToken});
+  res.status(200).json({success: true, message: "New Access token genereated", newAccessToken });
 });
 
-module.exports = { getUserController, createUserController, loginUserController, refreshTokenController };
+const otpVerificationController = asyncHandler(async (req, res) => {
+  const {email, otp} = req.body;
+  const verifiedUser = await userService.verifyOTP(email, otp);
+  res.status(200).json({success: true, message: "User verified successfully", user: verifiedUser });
+})
+
+module.exports = { getUserController, createUserController, loginUserController, refreshTokenController, otpVerificationController };

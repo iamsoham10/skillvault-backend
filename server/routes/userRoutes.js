@@ -7,6 +7,7 @@ router.get("/user/:user_id", inputValidator.checkParam, authControllers.getUserC
 router.post("/register", inputValidator.checkInput, authControllers.createUserController);
 router.post("/login", inputValidator.checkLoginInput, authControllers.loginUserController);
 router.post("/refresh-token", authControllers.refreshTokenController);
+router.post('/verify-otp', authControllers.otpVerificationController);
 router.put("/user/:id");
 router.delete("/user/:id");
 
