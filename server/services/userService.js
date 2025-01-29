@@ -15,7 +15,6 @@ const getUser = async (user_id) => {
 };
 
 const createUser = async ({ username, email, password }) => {
-  try {
     const userExist = await User.findOne({ email }).select("user_id");
     if (userExist) {
       throw new Error("User already exists");
@@ -47,13 +46,10 @@ const createUser = async ({ username, email, password }) => {
         emailOTPUser,
       },
     };
-  } catch (err) {
-    throw new Error("User creation failed");
-  }
+
 };
 
 const verifyOTP = async (email, otp) => {
-  console.log(email, otp);
   try {
     const user = await User.findOne({ email }).select("user_id");
     if (!user) {
