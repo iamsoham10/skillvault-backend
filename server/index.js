@@ -3,6 +3,7 @@ const connectToDB = require("./config/db");
 const cors = require("cors");
 require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
+const resourceRoutes = require("./routes/resourceRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 const tokenValidator = require("./middlewares/tokenValidator");
 
@@ -18,9 +19,13 @@ app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
+// user routes
 app.use("/api/user", userRoutes);
 // middleware to validate token
 app.use("/api/auth", tokenValidator, userRoutes);
+
+// resource routes
+app.use("/api/resource", resourceRoutes);
 
 // Use error handler middleware
 app.use(errorHandler);
