@@ -8,7 +8,7 @@ const createResourceController = asyncHandler(async (req, res) => {
 });
 
 const getAllResourcesController = asyncHandler(async (req, res) => {
-    const { user_id } = req.params;
+    const { user_id } = req.query;
     const allResources = await resourceService.getResources({ user_id });
     res.status(200).json({ success: true, message: "Resources fetched successfully", resources: allResources });
 });
@@ -22,8 +22,8 @@ const updateResourceController = asyncHandler(async (req, res) => {
 
 const deleteResourceController = asyncHandler(async (req, res) => {
     const { _id } = req.params;
-    const deletedResource = await resourceService.deleteResource({ _id });
-    res.status(204).json({ success: true, message: "Resource deleted successfully", resource: deletedResource });
+    await resourceService.deleteResource({ _id });
+    res.status(200).json({ success: true, message: "Resource deleted successfully" });
 });
 
 module.exports = { createResourceController, getAllResourcesController, updateResourceController, deleteResourceController };
