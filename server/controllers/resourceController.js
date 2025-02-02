@@ -9,7 +9,8 @@ const createResourceController = asyncHandler(async (req, res) => {
 
 const getAllResourcesController = asyncHandler(async (req, res) => {
     const { user_id } = req.query;
-    const allResources = await resourceService.getResources({ user_id });
+    const { page, limit } = req.query;
+    const allResources = await resourceService.getResources({ user_id, page, limit });
     res.status(200).json({ success: true, message: "Resources fetched successfully", resources: allResources });
 });
 

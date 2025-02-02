@@ -21,12 +21,27 @@ const createResource = async ({ title, url, description, user_id, tags }) => {
     }
 }
 
-const getResources = async ({ user_id }) => {
+const getResources = async ({ user_id, page, limit }) => {
     const resourceExist = await Resource.find({ user_id });
     if (resourceExist.length === 0) {
         return [];
     }
-    return resourceExist;
+    try {
+        const resources = await Resource.find({ user_id })
+            .skip((page - 1) * limit)
+            .limit(limit)
+        // .toArray();
+
+        const total = await Resource.countDocuments({ user_id });
+        return {
+            currentPage: page,
+            resources,
+            totalPages: Math.ceil(total / limit),
+            totalResources: total
+        };
+    } catch (err) {
+        throw new Error("Error fetching resources: ", err);
+    }
 }
 
 const updateResource = async ({ _id, updates }) => {
