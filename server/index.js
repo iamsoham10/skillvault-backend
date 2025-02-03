@@ -25,7 +25,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/auth", tokenValidator, userRoutes);
 
 // resource routes
-app.use("/api/resource", resourceRoutes);
+app.use("/api/resource", tokenValidator, resourceRoutes);
 
 // Use error handler middleware
 app.use(errorHandler);

@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const resourceController = require('../controllers/resourceController');
+const tokenValidator = require('../middlewares/tokenValidator');
 
+router.use(tokenValidator);
 router.post('/new-resource', resourceController.createResourceController);
 router.get('/all-resources', resourceController.getAllResourcesController);
 router.put('/update-resource', resourceController.updateResourceController);
-router.delete('/delete-resource/:_id', resourceController.deleteResourceController);
+router.delete('/delete-resource', resourceController.deleteResourceController);
 
 module.exports = router;
