@@ -21,6 +21,7 @@ const resourceSchema = new mongoose.Schema({
     },
     description: {
         type: String,
+        index: true
     },
     user_id: {
         type: String,

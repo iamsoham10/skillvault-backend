@@ -29,4 +29,14 @@ const deleteResourceController = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Resource deleted successfully" });
 });
 
-module.exports = { createResourceController, getAllResourcesController, updateResourceController, deleteResourceController };
+const searchResourcesController = asyncHandler(async (req, res) => {
+    const { user_id } = req.user; // Get user from auth middleware
+    const { topic, search } = req.query;
+
+    const results = await resourceService.searchResources({ user_id, topic, search });
+
+    res.status(200).json({ success: true, message: "Search results", resources: results });
+});
+
+
+module.exports = { createResourceController, getAllResourcesController, updateResourceController, deleteResourceController, searchResourcesController };

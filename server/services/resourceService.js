@@ -66,4 +66,19 @@ const deleteResource = async ({ _id }) => {
     return true;
 }
 
-module.exports = { createResource, getResources, updateResource, deleteResource };
+const searchResources = async ({ user_id, topic, search }) => {
+    const query = { user_id, tags: topic };
+    if (search) {
+        query.$text = { $search: search };
+    }
+    try {
+        const results = await Resource.find(query)
+            .sort({ createdAt: -1 })
+            .limit(10);
+        return results;
+    } catch (err) {
+        throw new Error("Error searching resources: ", err);
+    }
+}
+
+module.exports = { createResource, getResources, updateResource, deleteResource, searchResources };
