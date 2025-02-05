@@ -4,6 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
 const resourceRoutes = require("./routes/resourceRoutes");
+const collectionRoutes = require("./routes/collectionRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 const tokenValidator = require("./middlewares/tokenValidator");
 
@@ -26,6 +27,9 @@ app.use("/api/auth", tokenValidator, userRoutes);
 
 // resource routes
 app.use("/api/resource", tokenValidator, resourceRoutes);
+
+// collection routes
+app.use("/api/collection", tokenValidator, collectionRoutes);
 
 // Use error handler middleware
 app.use(errorHandler);

@@ -1,10 +1,11 @@
-const { default: mongoose } = require('mongoose');
 const Resource = require('../models/Resource');
+const Collection = require('../models/Collection');
+const mongoose = require('mongoose');
 
-const createResource = async ({ title, url, description, user_id, tags }) => {
+const createResource = async ({ title, url, description, user_id, tags, collection_id }) => {
     const resourceExist = await Resource.findOne({ url, user_id }).select('_id');
     if (resourceExist) {
-        throw new Error('Resouce already exists for this user');
+        throw new Error('This resource already exists for this user');
     }
     const newResource = new Resource({
         user_id,
@@ -12,9 +13,13 @@ const createResource = async ({ title, url, description, user_id, tags }) => {
         url,
         description,
         tags,
+        collection_id
     });
     try {
         await newResource.save();
+        await Collection.findByIdAndUpdate(collection_id, {
+            $push: { resources: newResource._id }
+        });
         return newResource;
     } catch (err) {
         throw new Error("Error saving resource: ", err);
@@ -60,24 +65,27 @@ const deleteResource = async ({ _id }) => {
         throw new Error("Invalid resource id");
     }
     const resourceToDelete = await Resource.findByIdAndDelete(_id);
+    await Collection.findByIdAndUpdate(resourceToDelete.collection_id, {
+        $pull: { resources: _id }
+    });
     if (!resourceToDelete) {
         throw new Error("Resource does not exist");
     }
     return true;
 }
 
-const searchResources = async ({ user_id, topic, search }) => {
-    const query = { user_id, tags: topic };
+const searchResources = async ({ user_id, collection_id, search }) => {
+    const query = { user_id, collection_id };
     if (search) {
         query.$text = { $search: search };
     }
     try {
-        const results = await Resource.find(query)
-            .sort({ createdAt: -1 })
+        const findResources = await Resource.find({ query })
+            .sort({ createAt: -1 })
             .limit(10);
-        return results;
+        return findResources;
     } catch (err) {
-        throw new Error("Error searching resources: ", err);
+        throw new Error('Error finding resource');
     }
 }
 

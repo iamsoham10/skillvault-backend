@@ -25,7 +25,12 @@ const resourceSchema = new mongoose.Schema({
     },
     user_id: {
         type: String,
-        // required: true,
+        required: true,
+    },
+    collection_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Collection",
+        required: true
     },
     domain: {
         type: String,

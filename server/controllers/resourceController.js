@@ -3,8 +3,9 @@ const resourceService = require('../services/resourceService');
 
 const createResourceController = asyncHandler(async (req, res) => {
     const { title, url, description, tags } = req.body;
+    const { collection_id } = req.query;
     const user_id = req.user.user_id;
-    const newResource = await resourceService.createResource({ title, url, description, user_id, tags });
+    const newResource = await resourceService.createResource({ title, url, description, user_id, tags, collection_id });
     res.status(201).json({ success: true, message: "Resource saved successfully", resource: newResource });
 });
 
@@ -30,11 +31,9 @@ const deleteResourceController = asyncHandler(async (req, res) => {
 });
 
 const searchResourcesController = asyncHandler(async (req, res) => {
-    const { user_id } = req.user; // Get user from auth middleware
-    const { topic, search } = req.query;
-
-    const results = await resourceService.searchResources({ user_id, topic, search });
-
+    const user_id = req.user.user_id
+    const { collection_id, search } = req.query;
+    const results = await resourceService.searchResources({ user_id, collection_id, search });
     res.status(200).json({ success: true, message: "Search results", resources: results });
 });
 
