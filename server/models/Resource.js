@@ -54,5 +54,8 @@ const resourceSchema = new mongoose.Schema({
 }
 );
 
+resourceSchema.index({ title: "text", description: "text", tags: "text" });
+
+
 const Resource = mongoose.model('Resource', resourceSchema);
 module.exports = Resource;

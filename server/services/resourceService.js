@@ -80,11 +80,12 @@ const searchResources = async ({ user_id, collection_id, search }) => {
         query.$text = { $search: search };
     }
     try {
-        const findResources = await Resource.find({ query })
+        const findResources = await Resource.find(query)
             .sort({ createAt: -1 })
             .limit(10);
         return findResources;
     } catch (err) {
+        console.log(err);
         throw new Error('Error finding resource');
     }
 }

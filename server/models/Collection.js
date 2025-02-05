@@ -4,6 +4,7 @@ const collectionSchema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        index: true
     },
     user_id: {
         type: String,
@@ -15,6 +16,8 @@ const collectionSchema = new mongoose.Schema({
         ref: "Resource"
     }]
 });
+collectionSchema.index({ title: "text" })
+
 
 const Collection = mongoose.model('Collection', collectionSchema);
 module.exports = Collection;

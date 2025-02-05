@@ -8,6 +8,6 @@ router.post('/new-resource', resourceController.createResourceController);
 router.get('/all-resources', resourceController.getAllResourcesController);
 router.put('/update-resource', resourceController.updateResourceController);
 router.delete('/delete-resource', resourceController.deleteResourceController);
-router.post('/search', resourceController.createResourceController);
+router.get('/search', resourceController.searchResourcesController);
 
 module.exports = router;

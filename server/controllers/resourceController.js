@@ -18,7 +18,7 @@ const getAllResourcesController = asyncHandler(async (req, res) => {
 
 const updateResourceController = asyncHandler(async (req, res) => {
     const { title, url, description, tags } = req.body;
-    const { _id } = req.query
+    const { _id } = req.query;
     const updates = { title, url, description, tags };
     const updatedResource = await resourceService.updateResource({ _id, updates });
     res.status(200).json({ success: true, message: "Resource updated successfully", resource: updatedResource });
@@ -31,7 +31,7 @@ const deleteResourceController = asyncHandler(async (req, res) => {
 });
 
 const searchResourcesController = asyncHandler(async (req, res) => {
-    const user_id = req.user.user_id
+    const user_id = req.user.user_id;
     const { collection_id, search } = req.query;
     const results = await resourceService.searchResources({ user_id, collection_id, search });
     res.status(200).json({ success: true, message: "Search results", resources: results });
