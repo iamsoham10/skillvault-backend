@@ -1,19 +1,24 @@
 const Resource = require('../models/Resource');
 const Collection = require('../models/Collection');
+const metadataService = require('../services/metadataService');
 const mongoose = require('mongoose');
 
-const createResource = async ({ title, url, description, user_id, tags, collection_id }) => {
+const createResource = async ({ title, url, description, user_id, tags, collection_id, domain, favicon, thumbnail }) => {
     const resourceExist = await Resource.findOne({ url, user_id }).select('_id');
     if (resourceExist) {
         throw new Error('This resource already exists for this user');
     }
+    const metadata = await metadataService.metadataExtraction(url);
     const newResource = new Resource({
         user_id,
         title,
         url,
         description,
         tags,
-        collection_id
+        collection_id,
+        domain: metadata.domainName,
+        favicon: metadata.faviconImage,
+        thumbnail: metadata.thumbnail
     });
     try {
         await newResource.save();
