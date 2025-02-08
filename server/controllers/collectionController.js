@@ -8,4 +8,11 @@ const createCollectionController = asyncHandler(async (req, res) => {
     res.status(201).json({ success: true, message: "Collection created successfully", collection: newCollection });
 });
 
-module.exports = { createCollectionController };
+const getCollectionsController = asyncHandler(async (req, res) => {
+    const user_id = req.user.user_id;
+    const { page, limit } = req.query;
+    const collections = await collectionService.getCollections({ user_id, page, limit });
+    res.status(200).json({ success: true, message: "Collections fetched successfully", AllCollections: collections });
+});
+
+module.exports = { createCollectionController, getCollectionsController };

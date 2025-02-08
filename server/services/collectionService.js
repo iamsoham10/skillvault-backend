@@ -18,4 +18,21 @@ const createCollection = async ({ title, user_id }) => {
     }
 }
 
-module.exports = { createCollection };
+const getCollections = async ({ user_id, page, limit }) => {
+    const collections = await Collection.find({ user_id })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .lean() // for converting into plain javascript objects
+    if (!collections) {
+        throw new Error("No collections present for this user");
+    }
+    const totalCollections = await Collection.countDocuments({ user_id });
+    return {
+        currentPage: page,
+        totalPages: Math.ceil(totalCollections / limit),
+        totalNoOfCollections: totalCollections,
+        collections,
+    }
+}
+
+module.exports = { createCollection, getCollections };
