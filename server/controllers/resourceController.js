@@ -19,8 +19,9 @@ const getAllResourcesController = asyncHandler(async (req, res) => {
 const updateResourceController = asyncHandler(async (req, res) => {
     const { title, url, description, tags } = req.body;
     const { _id } = req.query;
+    const user_id = req.user.user_id;
     const updates = { title, url, description, tags };
-    const updatedResource = await resourceService.updateResource({ _id, updates });
+    const updatedResource = await resourceService.updateResource({ _id, updates, user_id });
     res.status(200).json({ success: true, message: "Resource updated successfully", resource: updatedResource });
 });
 

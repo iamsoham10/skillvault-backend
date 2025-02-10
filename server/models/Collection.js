@@ -14,6 +14,18 @@ const collectionSchema = new mongoose.Schema({
     resources: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Resource"
+    }],
+    sharedWith: [{
+        user_id: {
+            type: String,
+            ref: "User",
+            required: true
+        },
+        role: {
+            type: String,
+            enum: ['viewer', 'editor'],
+            required: true
+        }
     }]
 });
 collectionSchema.index({ title: "text" })

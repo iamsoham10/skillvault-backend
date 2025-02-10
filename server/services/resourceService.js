@@ -54,9 +54,34 @@ const getResources = async ({ user_id, page, limit }) => {
     }
 }
 
-const updateResource = async ({ _id, updates }) => {
+const updateResource = async ({ _id, updates, user_id }) => {
     if (Object.keys(updates).length === 0) {
         throw new Error("No updates provided");
+    }
+    // fetching resource to get the collection id
+    const resource = await Resource.findById(_id).select("collection_id");
+    if (!resource) {
+        throw new Error("Resource does not exist");
+    }
+
+    // find the collection in which the resource exists
+    const fetchedCollection = await Collection.findOne({ resources: _id }).select("user_id sharedWith");
+    if (!fetchedCollection) {
+        throw new Error("Resource does not belong to any collection");
+    }
+    const checkUserPermission = async (fetchedCollection, user_id) => {
+        //check if user is owner
+        if (fetchedCollection.user_id === user_id) {
+            return true;
+        }
+        // check if resource is shared with user
+        const sharedAcess = fetchedCollection.sharedWith.find(share => share.user_id === user_id);
+        // check if user is editor or not
+        return sharedAcess?.role === 'editor';
+    }
+    const hasPermission = await checkUserPermission(fetchedCollection, user_id);
+    if (!hasPermission) {
+        throw new Error("You do not have permission to edit this resource");
     }
     const updateResource = await Resource.findByIdAndUpdate(_id, { $set: updates }, { new: true });
     if (!updateResource) {
@@ -65,12 +90,26 @@ const updateResource = async ({ _id, updates }) => {
     return updateResource;
 }
 
-const deleteResource = async ({ _id }) => {
+const deleteResource = async ({ _id, user_id }) => {
     if (!mongoose.Types.ObjectId.isValid(_id)) {
         throw new Error("Invalid resource id");
     }
+    // get the collection id
+    const resource = await Resource.findById(_id).select("collection_id");
+    if (!resource) {
+        throw new Error("Resource does not exist");
+    }
+    // get the collection in which the resource exists
+    const collection = await Collection.findOne({ _id: resource.collection_id }).select("user_id");
+    if (!collection) {
+        throw new Error("Resource does not belong to any collection");
+    }
+    const isOwner = collection.user_id.toString() === user_id;
+    if (!isOwner) {
+        throw new Error("You do not have permission to delete this resource");
+    }
     const resourceToDelete = await Resource.findByIdAndDelete(_id);
-    await Collection.findByIdAndUpdate(resourceToDelete.collection_id, {
+    Collection.findByIdAndUpdate(resourceToDelete.collection_id, {
         $pull: { resources: _id }
     });
     if (!resourceToDelete) {

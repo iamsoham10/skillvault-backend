@@ -15,4 +15,11 @@ const getCollectionsController = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Collections fetched successfully", AllCollections: collections });
 });
 
-module.exports = { createCollectionController, getCollectionsController };
+const shareCollectionController = asyncHandler(async (req, res) => {
+    const { collection_id, role } = req.query;
+    const { user_id } = req.body;
+    await collectionService.shareCollection({ collection_id, user_id, role });
+    res.status(200).json({ success: true, message: "Collection shared successfully" });
+});
+
+module.exports = { createCollectionController, getCollectionsController, shareCollectionController };

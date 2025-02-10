@@ -19,14 +19,20 @@ const createCollection = async ({ title, user_id }) => {
 }
 
 const getCollections = async ({ user_id, page, limit }) => {
-    const collections = await Collection.find({ user_id })
+    const query = {
+        $or: [
+            { user_id },
+            { 'sharedWith.user_id': user_id }
+        ]
+    }
+    const collections = await Collection.find(query)
         .skip((page - 1) * limit)
         .limit(limit)
         .lean() // for converting into plain javascript objects
-    if (!collections) {
+    if (!collections || collections.length === 0) {
         throw new Error("No collections present for this user");
     }
-    const totalCollections = await Collection.countDocuments({ user_id });
+    const totalCollections = await Collection.countDocuments(query);
     return {
         currentPage: page,
         totalPages: Math.ceil(totalCollections / limit),
@@ -35,4 +41,18 @@ const getCollections = async ({ user_id, page, limit }) => {
     }
 }
 
-module.exports = { createCollection, getCollections };
+const shareCollection = async ({ collection_id, user_id, role }) => {
+    const collection = await Collection.findById(collection_id);
+    if (!collection) {
+        throw new Error("Collection does not exist");
+    }
+    collection.sharedWith.push({ user_id, role });
+    try {
+        await collection.save();
+        return collection;
+    } catch (err) {
+        throw new Error("Error sharing collection");
+    }
+}
+
+module.exports = { createCollection, getCollections, shareCollection };
