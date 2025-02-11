@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
       unique: true,
       index: true
     },
+    collections: [{
+      type: String,
+      ref: "Collection",
+    }],
     refreshToken: {
       type: String,
       select: false,

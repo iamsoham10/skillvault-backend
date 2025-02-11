@@ -3,8 +3,9 @@ const collectionService = require('../services/collectionService');
 
 const createCollectionController = asyncHandler(async (req, res) => {
     const { title } = req.body;
+    const _id = req.query;
     const user_id = req.user.user_id;
-    const newCollection = await collectionService.createCollection({ title, user_id });
+    const newCollection = await collectionService.createCollection({ title, user_id, _id });
     res.status(201).json({ success: true, message: "Collection created successfully", collection: newCollection });
 });
 
@@ -22,4 +23,11 @@ const shareCollectionController = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Collection shared successfully" });
 });
 
-module.exports = { createCollectionController, getCollectionsController, shareCollectionController };
+const searchCollectionController = asyncHandler(async (req, res) => {
+    const user_id = req.user.user_id;
+    const { search } = req.query;
+    const collections = await collectionService.searchCollection({ user_id, search });
+    res.status(200).json({ success: true, message: "Search results", collections });
+})
+
+module.exports = { createCollectionController, getCollectionsController, shareCollectionController, searchCollectionController };

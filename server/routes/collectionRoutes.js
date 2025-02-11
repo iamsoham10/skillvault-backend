@@ -7,5 +7,6 @@ router.use(tokenValidator);
 router.post('/new-collection', collectionController.createCollectionController);
 router.get('/all-collection', collectionController.getCollectionsController);
 router.post('/share-collection', collectionController.shareCollectionController);
+router.post('/search-collection', collectionController.searchCollectionController);
 
 module.exports = router;

@@ -12,7 +12,7 @@ const collectionSchema = new mongoose.Schema({
         required: true,
     },
     resources: [{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: "Resource"
     }],
     sharedWith: [{
@@ -28,7 +28,7 @@ const collectionSchema = new mongoose.Schema({
         }
     }]
 });
-collectionSchema.index({ title: "text" })
+collectionSchema.index({ title: "text" });
 
 
 const Collection = mongoose.model('Collection', collectionSchema);

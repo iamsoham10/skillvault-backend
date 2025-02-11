@@ -1,6 +1,7 @@
 const Collection = require('../models/Collection');
+const User = require('../models/User');
 
-const createCollection = async ({ title, user_id }) => {
+const createCollection = async ({ title, user_id, _id }) => {
     const checkCollection = await Collection.findOne({ title }).select("_id");
     if (checkCollection) {
         throw new Error('Collection already exists with same name');
@@ -11,6 +12,9 @@ const createCollection = async ({ title, user_id }) => {
     });
     try {
         await newCollection.save();
+        await User.findByIdAndUpdate(_id, {
+            $push: { collections: newCollection._id }
+        })
         return newCollection;
     } catch (err) {
         console.log(err);
@@ -55,4 +59,24 @@ const shareCollection = async ({ collection_id, user_id, role }) => {
     }
 }
 
-module.exports = { createCollection, getCollections, shareCollection };
+const searchCollection = async ({ user_id, search }) => {
+    const query = {
+        $or: [
+            { user_id },
+            { 'sharedWith.user_id': user_id }
+        ]
+    };
+    if (search) {
+        query.$text = { $search: search };
+    }
+    try {
+        const collections = await Collection.find(query)
+            .select('title user_id resources')
+            .lean();
+        return collections;
+    } catch (err) {
+        throw new Error('Error searching collections');
+    }
+}
+
+module.exports = { createCollection, getCollections, shareCollection, searchCollection };
