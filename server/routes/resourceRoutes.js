@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const resourceController = require('../controllers/resourceController');
 const tokenValidator = require('../middlewares/tokenValidator');
-const resourceInputValidator = require('../middlewares/resourceInputValidator');
+const resourceInputValidator = require('../middlewares/resourceValidator');
 
 router.use(tokenValidator);
 router.post('/new-resource', resourceInputValidator.validateInputSchema, resourceController.createResourceController);

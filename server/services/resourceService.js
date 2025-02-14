@@ -4,11 +4,15 @@ const metadataService = require('../services/metadataService');
 const mongoose = require('mongoose');
 
 const createResource = async ({ title, url, description, user_id, tags, collection_id, domain, favicon, thumbnail }) => {
-    const resourceExist = await Resource.findOne({ url, user_id }).select('_id');
+
+    const [resourceExist, metadata, findCollection] = await Promise.all([
+        await Resource.findOne({ url, user_id }).select('_id').lean(),
+        await metadataService.metadataExtraction(url),
+        await Collection.findById(collection_id).select("user_id sharedWith").lean(),
+    ]);
     if (resourceExist) {
         throw new Error('This resource already exists for this user');
     }
-    const metadata = await metadataService.metadataExtraction(url);
     const newResource = new Resource({
         user_id,
         title,
@@ -20,11 +24,25 @@ const createResource = async ({ title, url, description, user_id, tags, collecti
         favicon: metadata.faviconImage,
         thumbnail: metadata.thumbnail
     });
+    const checkPermission = async (collection_id, user_id) => {
+        // check if user is owner
+        if (findCollection.user_id === user_id) {
+            return true;
+        }
+        const sharedResourceAccess = findCollection.sharedWith.find(shared => shared.user_id === user_id);
+        return sharedResourceAccess?.role === 'editor';
+    }
+    const userHasPermission = await checkPermission(collection_id, user_id);
+    if (!userHasPermission) {
+        throw new Error("You do not have permission to edit this resource");
+    }
     try {
-        await newResource.save();
-        await Collection.findByIdAndUpdate(collection_id, {
-            $push: { resources: newResource._id }
-        });
+        await Promise.all([
+            await newResource.save(),
+            await Collection.findByIdAndUpdate(collection_id, {
+                $push: { resources: newResource._id }
+            }),
+        ]);
         return newResource;
     } catch (err) {
         throw new Error("Error saving resource: ", err);

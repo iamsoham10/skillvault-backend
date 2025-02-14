@@ -6,12 +6,6 @@ const resourceSchema = new mongoose.Schema({
         required: true,
         trim: true,
         index: true,
-        // validate: {
-        //     validator: function(v) {
-        //       return /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(v);
-        //     },
-        //     message: props => `${props.value} is not a valid URL!`
-        //   }
     },
     title: {
         type: String,

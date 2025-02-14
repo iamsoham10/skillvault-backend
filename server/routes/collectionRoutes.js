@@ -2,11 +2,12 @@ const express = require('express');
 const router = express.Router();
 const collectionController = require('../controllers/collectionController');
 const tokenValidator = require('../middlewares/tokenValidator');
+const collectionInputValidator = require('../middlewares/collectionValidator');
 
 router.use(tokenValidator);
-router.post('/new-collection', collectionController.createCollectionController);
-router.get('/all-collection', collectionController.getCollectionsController);
-router.post('/share-collection', collectionController.shareCollectionController);
-router.post('/search-collection', collectionController.searchCollectionController);
+router.post('/new-collection', collectionInputValidator.createCollectionInputSchema, collectionController.createCollectionController);
+router.get('/all-collection', collectionInputValidator.validateGetCollections, collectionController.getCollectionsController);
+router.post('/share-collection', collectionInputValidator.shareCollectionInputSchema, collectionController.shareCollectionController);
+router.post('/search-collection', collectionInputValidator.validateSearchCollection, collectionController.searchCollectionController);
 
 module.exports = router;
