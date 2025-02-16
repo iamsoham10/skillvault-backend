@@ -16,6 +16,13 @@ const getCollectionsController = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Collections fetched successfully", AllCollections: collections });
 });
 
+const deleteCollectionController = asyncHandler(async (req, res) => {
+    const { collection_id } = req.query;
+    const user_id = req.user.user_id;
+    await collectionService.deleteCollection({ collection_id, user_id });
+    res.status(200).json({ success: true, message: "Collection deleted successfully" });
+})
+
 const shareCollectionController = asyncHandler(async (req, res) => {
     const { collection_id, role } = req.query;
     const { user_id } = req.body;
@@ -30,4 +37,4 @@ const searchCollectionController = asyncHandler(async (req, res) => {
     res.status(200).json({ success: true, message: "Search results", collections });
 })
 
-module.exports = { createCollectionController, getCollectionsController, shareCollectionController, searchCollectionController };
+module.exports = { createCollectionController, getCollectionsController, deleteCollectionController, shareCollectionController, searchCollectionController };

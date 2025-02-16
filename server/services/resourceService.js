@@ -2,6 +2,7 @@ const Resource = require('../models/Resource');
 const Collection = require('../models/Collection');
 const metadataService = require('../services/metadataService');
 const mongoose = require('mongoose');
+const client = require('../config/redisClient');
 
 const createResource = async ({ title, url, description, user_id, tags, collection_id, domain, favicon, thumbnail }) => {
 
@@ -43,30 +44,40 @@ const createResource = async ({ title, url, description, user_id, tags, collecti
                 $push: { resources: newResource._id }
             }),
         ]);
+        const keysToSearch = await client.keys(`search:${user_id}:collection_id:${collection_id}:*`);
+        if (keysToSearch.length > 0) {
+            await client.del(keysToSearch);
+        };
         return newResource;
     } catch (err) {
         throw new Error("Error saving resource: ", err);
     }
 }
 
-const getResources = async ({ user_id, page, limit }) => {
-    const resourceExist = await Resource.find({ user_id });
-    if (resourceExist.length === 0) {
-        return [];
+const getResources = async ({ user_id, collection_id, page, limit }) => {
+    // check the redis cache
+    const cacheKey = `resource:${user_id}:collection_id:${collection_id}:page:${page}:limit:${limit}`;
+    const cachedResources = await client.get(cacheKey);
+    if (cachedResources) {
+        return JSON.parse(cachedResources);
     }
     try {
-        const resources = await Resource.find({ user_id })
+        const resources = await Resource.find({ collection_id })
             .skip((page - 1) * limit)
             .limit(limit)
-        // .toArray();
-
+            .lean();
+        if (!resources || resources.length === 0) {
+            return [];
+        }
         const total = await Resource.countDocuments({ user_id });
-        return {
+        const response = {
             currentPage: page,
             resources,
             totalPages: Math.ceil(total / limit),
             totalResources: total
         };
+        await client.set(cacheKey, JSON.stringify(response), "EX", 3600);
+        return response;
     } catch (err) {
         throw new Error("Error fetching resources: ", err);
     }
@@ -105,6 +116,10 @@ const updateResource = async ({ _id, updates, user_id }) => {
     if (!updateResource) {
         throw new Error("Resource does not exist");
     }
+    const keysToUpdate = await client.keys(`resource:${user_id}:collection_id:${resource.collection_id}:*`);
+    if (keysToUpdate.length > 0) {
+        await client.del(keysToUpdate);
+    };
     return updateResource;
 }
 
@@ -137,6 +152,11 @@ const deleteResource = async ({ _id, user_id }) => {
 }
 
 const searchResources = async ({ user_id, collection_id, search }) => {
+    const cacheSearchKey = `search:${user_id}:collection_id:${collection_id}:${search}`;
+    const cachedSearchResource = await client.get(cacheSearchKey);
+    if (cachedSearchResource) {
+        return JSON.parse(cachedSearchResource);
+    }
     const query = { user_id, collection_id };
     if (search) {
         query.$text = { $search: search };
@@ -145,6 +165,7 @@ const searchResources = async ({ user_id, collection_id, search }) => {
         const findResources = await Resource.find(query)
             .sort({ createAt: -1 })
             .limit(10);
+        await client.set(cacheSearchKey, JSON.stringify(findResources), "EX", 3600);
         return findResources;
     } catch (err) {
         console.log(err);

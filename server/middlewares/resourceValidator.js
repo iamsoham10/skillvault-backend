@@ -24,6 +24,8 @@ const newResourceParamSchema = joi.object({
 });
 
 const getResourceSchema = joi.object({
+    collection_id: joi.string()
+        .required(),
     page: joi.number()
         .required(),
     limit: joi.number()
