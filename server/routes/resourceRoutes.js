@@ -3,7 +3,7 @@ const router = express.Router();
 const resourceController = require('../controllers/resourceController');
 const tokenValidator = require('../middlewares/tokenValidator');
 const resourceInputValidator = require('../middlewares/resourceValidator');
-const searchLimiter = require('../middlewares/rateLimiter');
+const { searchLimiter } = require('../middlewares/rateLimiter');
 
 router.use(tokenValidator);
 router.post('/new-resource', resourceInputValidator.validateInputSchema, resourceController.createResourceController);
