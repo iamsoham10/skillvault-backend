@@ -17,9 +17,9 @@ const getCollectionsController = asyncHandler(async (req, res) => {
 });
 
 const deleteCollectionController = asyncHandler(async (req, res) => {
-    const { collection_id } = req.query;
+    const { collection_id, _id } = req.query;
     const user_id = req.user.user_id;
-    await collectionService.deleteCollection({ collection_id, user_id });
+    await collectionService.deleteCollection({ collection_id, user_id, _id });
     res.status(200).json({ success: true, message: "Collection deleted successfully" });
 })
 

@@ -17,10 +17,6 @@ const createCollection = async ({ title, user_id, _id }) => {
         await User.findByIdAndUpdate(_id, {
             $push: { collections: newCollection._id }
         });
-        const keysToSearch = await client.keys(`search:${user_id}:${search}`);
-        if (keysToSearch.length > 0) {
-            await client.del(keysToSearch);
-        }
         return newCollection;
     } catch (err) {
         console.log(err);
@@ -58,7 +54,7 @@ const getCollections = async ({ user_id, page, limit }) => {
     return responseCollections;
 }
 
-const deleteCollection = async ({ collection_id, user_id }) => {
+const deleteCollection = async ({ collection_id, user_id, _id }) => {
     const collectionToDelete = await Collection.findById(collection_id).select("user_id");
     if (!collectionToDelete) {
         throw new Error('Collection does not exist');
@@ -75,7 +71,10 @@ const deleteCollection = async ({ collection_id, user_id }) => {
     }
     // delete the collection
     const deletedCollection = await Collection.findByIdAndDelete(collection_id);
-    if (deletedCollection) {
+    const deleteCollectionIdFromUser = await User.findByIdAndUpdate(_id, {
+        $pull: { collections: collection_id }
+    })
+    if (deletedCollection && deleteCollectionIdFromUser) {
         return true;
     }
 }
