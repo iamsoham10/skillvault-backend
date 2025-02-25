@@ -8,6 +8,7 @@ const resourceRoutes = require("./routes/resourceRoutes");
 const collectionRoutes = require("./routes/collectionRoutes");
 const errorHandler = require("./middlewares/errorHandler");
 const tokenValidator = require("./middlewares/tokenValidator");
+const recommendationRoutes = require("./services/recommendationService");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,6 +33,9 @@ app.use("/api/resource", tokenValidator, resourceRoutes);
 
 // collection routes
 app.use("/api/collection", tokenValidator, collectionRoutes);
+
+// recommendation routes
+app.use("/api/recommend", recommendationRoutes);
 
 // Use error handler middleware
 app.use(errorHandler);
