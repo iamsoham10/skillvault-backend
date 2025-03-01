@@ -18,7 +18,7 @@ const Noir = definePreset(Aura, {
         colorScheme: {
             light: {
                 primary: {
-                    color: '#2196F3', // Blue in light mode
+                    color: '#0d5bc9', // Blue in light mode
                     inverseColor: '#ffffff',
                     hoverColor: '#1976D2',
                     activeColor: '#1565C0'
@@ -30,7 +30,7 @@ const Noir = definePreset(Aura, {
             },
             dark: {
                 primary: {
-                    color: '#FF9800', // Orange in dark mode
+                    color: '##3684f2', // Orange in dark mode
                     inverseColor: '#212121',
                     hoverColor: '#FB8C00',
                     activeColor: '#F57C00'

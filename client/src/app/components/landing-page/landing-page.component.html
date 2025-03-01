@@ -1,0 +1,216 @@
+<nav class="relative bg-background font-primary h-16 w-full">
+  <div
+    class="absolute inset-0 pl-4 flex justify-start items-center text-4xl font-bold text-text"
+  >
+    SkillVault
+  </div>
+</nav>
+
+<main>
+  <section id="header-section">
+    <div class="h-full w-full dark:bg-background bg-white relative pb-24">
+      <!-- Dark mode dot pattern - hidden in light mode, shown in dark mode -->
+      <div
+        class="absolute inset-0 hidden dark:block"
+        style="
+          background-image: radial-gradient(
+            rgba(255, 255, 255, 0.471) 1px,
+            transparent 1px
+          );
+          background-size: 25px 25px;
+        "
+      ></div>
+
+      <!-- This creates the blur/fade effect in the center -->
+      <div
+        class="absolute pointer-events-none inset-0 flex items-center justify-center dark:bg-background bg-white"
+        style="
+          mask-image: radial-gradient(
+            ellipse at center,
+            transparent 30%,
+            black
+          );
+          -webkit-mask-image: radial-gradient(
+            ellipse at center,
+            transparent 10%,
+            black
+          );
+        "
+      ></div>
+
+      <div class="flex flex-col items-center justify-center pt-24">
+        <p class="relative font-primary text-6xl text-text font-bold">
+          Never lose a
+          <span
+            class="bg-gradient-to-r from-primary to-accent via-secondary text-transparent bg-clip-text"
+            >valuable resource</span
+          >
+          again
+        </p>
+        <p class="relative font-primary text-2xl text-text pt-4 font-semibold">
+          Organize, discover, and share all your learning resources in one
+          place!
+        </p>
+        <p-button
+          styleClass="!font-secondary"
+          class="mt-10 hover:scale-105 transition-transform ease-in"
+          label=" Get Started"
+        />
+        <div class="relative mt-40">
+          <p-chip
+            styleClass="!font-secondary !text-white !text-xl !bg-secondary"
+            label="Powerful Features"
+          />
+        </div>
+        <div class="flex flex-col items-center justify-center mt-10">
+          <p class="relative font-primary text-4xl text-text font-bold">
+            Everything you
+            <span class="text-accent">need</span>
+            to manage your resources
+          </p>
+          <p
+            class="relative text-text texl-2xl mt-4 font-primary font-semibold"
+          >
+            SkillVault helps you organize, discover, and share all your valuable
+            learning materials in one place.
+          </p>
+        </div>
+        <div class="grid grid-cols-3 gap-20 mt-10">
+          <p-card styleClass="!h-82 !w-96 !relative !bg-subbackground !pb-4">
+            <div class="bg-indigo-300 absolute m-4 rounded-lg">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-8 w-8 text-white m-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                ></path>
+              </svg>
+            </div>
+            <div
+              class="flex flex-col items-start justify-center relative text-text pl-4"
+            >
+              <p class="text-xl font-bold font-secondary mt-24">
+                Organized Collections
+              </p>
+              <p class="font-secondary mt-5">
+                Create custom collections for different topics, projects, or
+                courses. Categorize your resources with tags for easy searching
+                and filtering.
+              </p>
+            </div>
+          </p-card>
+          <p-card styleClass="!h-82 !w-96 !relative !bg-subbackground !pb-4">
+            <div class="bg-amber-600 absolute m-4 rounded-lg">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-8 w-8 text-white m-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
+                ></path>
+              </svg>
+            </div>
+            <div
+              class="flex flex-col items-start justify-center relative text-text pl-4"
+            >
+              <p class="text-xl font-bold font-secondary mt-24">
+                Smart Recommendations
+              </p>
+              <p class="font-secondary mt-5">
+                Discover new resources based on your interests and existing
+                collections.Our AI-powered system suggests relevant content to
+                enhance your learning journey.
+              </p>
+            </div>
+          </p-card>
+          <p-card styleClass="!h-82 !w-96 !relative !bg-subbackground !pb-4">
+            <div class="bg-purple-600 absolute m-4 rounded-lg">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-8 w-8 text-white m-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                ></path>
+              </svg>
+            </div>
+            <div
+              class="flex flex-col items-start justify-center relative text-text pl-4"
+            >
+              <p class="text-xl font-bold font-secondary mt-24">
+                Collaboration & Sharing
+              </p>
+              <p class="font-secondary mt-5">
+                Work together with friends, classmates, or colleagues. Share
+                collections with customizable permissions for viewing or
+                editing.
+              </p>
+            </div>
+          </p-card>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="working if skillvault" class="bg-background pb-12">
+    <div class="flex justify-center items-center pt-24">
+      <p-chip
+        styleClass="!font-secondary !text-white !text-xl !bg-secondary"
+        label="How It Works"
+      />
+    </div>
+    <div class="flex flex-col items-center justify-center mt-10 mb-16">
+      <p class="relative font-primary text-4xl text-text font-bold">
+        How SkillVault Works
+      </p>
+      <p class="relative text-text texl-2xl mt-4 font-primary font-semibold">
+        Our intuitive platform makes organizing and accessing your learning
+        resources simpler than ever before.
+      </p>
+    </div>
+
+    <div class="card">
+      <p-timeline
+        [value]="events"
+        align="alternate"
+        styleClass="customized-timeline"
+      >
+        <ng-template #marker let-event>
+          <span
+            class="flex w-8 h-8 items-center justify-center text-white rounded-full z-10 shadow-sm"
+            [style]="{ 'background-color': event.color }"
+          >
+          </span>
+        </ng-template>
+        <ng-template #content let-event>
+          <p-card
+            [header]="event.status"
+            [subheader]="event.info"
+            styleClass="!py-4 !bg-subbackground !text-text"
+          >
+          </p-card>
+        </ng-template>
+      </p-timeline>
+    </div>
+
+    asdasd
+  </section>
+</main>
