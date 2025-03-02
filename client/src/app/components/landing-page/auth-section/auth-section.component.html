@@ -1,0 +1,100 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  maskStyleClass="backdrop-blur-sm"
+  styleClass="!border-0 !bg-transparent"
+>
+  <div
+    class="flex flex-col px-8 py-8 gap-6 rounded-2xl bg-gradient-to-br from-secondary to-accent"
+  >
+    <!-- Title -->
+    <p class="text-3xl font-bold text-text font-primary text-center">
+      {{ isLoginMode ? "Login" : "Sign Up" }}
+    </p>
+
+    <!-- Login Form -->
+    <div *ngIf="isLoginMode" class="flex flex-col gap-6">
+      <div class="inline-flex flex-col gap-2">
+        <label for="login-email" class="text-primary-50 font-semibold"
+          >Email</label
+        >
+        <input
+          pInputText
+          id="login-email"
+          class="!bg-white/20 !border-0 !text-primary-50 w-80"
+        />
+      </div>
+      <div class="inline-flex flex-col gap-2">
+        <label for="login-password" class="text-primary-50 font-semibold"
+          >Password</label
+        >
+        <input
+          pInputText
+          id="login-password"
+          type="password"
+          class="!bg-white/20 !border-0 !text-primary-50 w-80"
+        />
+      </div>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div *ngIf="!isLoginMode" class="flex flex-col gap-6">
+      <div class="inline-flex flex-col gap-2">
+        <label for="signup-username" class="text-primary-50 font-semibold"
+          >Username</label
+        >
+        <input
+          pInputText
+          id="signup-username"
+          class="!bg-white/20 !border-0 !text-primary-50 w-80"
+        />
+      </div>
+      <div class="inline-flex flex-col gap-2">
+        <label for="signup-email" class="text-primary-50 font-semibold"
+          >Email</label
+        >
+        <input
+          pInputText
+          id="signup-email"
+          class="!bg-white/20 !border-0 !text-primary-50 w-80"
+        />
+      </div>
+      <div class="inline-flex flex-col gap-2">
+        <label for="signup-password" class="text-primary-50 font-semibold"
+          >Password</label
+        >
+        <input
+          pInputText
+          id="signup-password"
+          type="password"
+          class="!bg-white/20 !border-0 !text-primary-50 w-80"
+        />
+      </div>
+    </div>
+
+    <!-- Toggle Link -->
+    <div class="text-text pl-2 text-sm text-center font-primary">
+      <span>
+        {{
+          isLoginMode ? "Don't have an account?" : "Already have an account?"
+        }}
+        <a
+          (click)="toggleMode()"
+          class="text-subbackground font-bold cursor-pointer hover:text-white"
+        >
+          {{ isLoginMode ? "Sign Up" : "Login" }}
+        </a>
+      </span>
+    </div>
+
+    <!-- Action Buttons -->
+
+    <p-button
+      [label]="isLoginMode ? 'Sign In' : 'Sign Up'"
+      (click)="onClose()"
+      [text]="true"
+      styleClass="w-full !text-primary-50 !border !border-white/30 hover:!bg-white/10"
+      class="w-full"
+    />
+  </div>
+</p-dialog>
