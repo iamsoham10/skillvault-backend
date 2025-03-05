@@ -31,13 +31,14 @@
         >
         <p-password
           formControlName="password"
-          [(ngModel)]="value"
           [style]="{ width: '100%' }"
           [inputStyle]="{ width: '100%' }"
           [feedback]="false"
           [toggleMask]="true"
         />
       </div>
+      <!-- Show error messages dynamically -->
+      <p *ngIf="errorMessage()" class="text-red-500 text-md font-semibold text-center">Login Failed</p>
       <!-- Toggle Link -->
       <div class="text-text pl-2 text-sm text-center font-primary">
       <span>
@@ -56,8 +57,9 @@
         label="Sign In"
         (click)="onSubmit()"
         [text]="true"
-        styleClass="w-full !text-primary-50 !border !border-white/50 hover:!bg-white/10 "
-        class="w-full"
+        styleClass="!text-background !w-full !border !border-text !text-lg !font-primary"
+        class="w-full font-bold active:scale-95
+         transition-transform"
       />
     </form>
 
@@ -96,31 +98,28 @@
           styleClass="!bg-transparent"
         />
       </div>
+      <!-- Toggle Link -->
+      <div class="text-text pl-2 text-sm text-center font-primary">
+      <span>
+        {{
+          isLoginMode ? "Don't have an account?" : "Already have an account?"
+        }}
+        <a
+          (click)="toggleMode()"
+          class="text-subbackground font-bold cursor-pointer hover:text-white"
+        >
+          {{ isLoginMode ? "Sign Up" : "Login" }}
+        </a>
+      </span>
+      </div>
+      <p-button
+        label="Sign Up"
+        (click)="onSubmit()"
+        [text]="true"
+        styleClass="!text-background !w-full !border !border-text !text-lg !font-primary"
+        class="w-full font-bold active:scale-95
+         transition-transform"
+      />
     </div>
-
-    <!-- Toggle Link -->
-<!--    <div class="text-text pl-2 text-sm text-center font-primary">-->
-<!--      <span>-->
-<!--        {{-->
-<!--          isLoginMode ? "Don't have an account?" : "Already have an account?"-->
-<!--        }}-->
-<!--        <a-->
-<!--          (click)="toggleMode()"-->
-<!--          class="text-subbackground font-bold cursor-pointer hover:text-white"-->
-<!--        >-->
-<!--          {{ isLoginMode ? "Sign Up" : "Login" }}-->
-<!--        </a>-->
-<!--      </span>-->
-<!--    </div>-->
-
-    <!-- Action Buttons -->
-
-<!--    <p-button-->
-<!--      [label]="isLoginMode ? 'Sign In' : 'Sign Up'"-->
-<!--      (click)="onSubmit()"-->
-<!--      [text]="true"-->
-<!--      styleClass="w-full !text-primary-50 !border !border-white/50 hover:!bg-white/10"-->
-<!--      class="w-full"-->
-<!--    />-->
   </div>
 </p-dialog>
