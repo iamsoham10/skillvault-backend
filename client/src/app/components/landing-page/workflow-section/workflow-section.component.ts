@@ -20,7 +20,7 @@ export class FeatureSectionComponent {
   readonly events: EventItem[] = [
     {
       status: 'Save Resources From Anywhere',
-      info: 'Use our browser extension to instantly save any useful resource you come across online. Just one click, and it is saved to your ResourceHub account.',
+      info: 'Use our browser extension to instantly save any useful resource you come across online. Just one click, and it is saved to your SkillVault account.',
       color: '#e6e9ef'
     },
     {

@@ -1,4 +1,4 @@
-import {Component, inject, OnDestroy, resource, signal} from '@angular/core';
+import {Component, inject, OnDestroy, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ButtonModule} from 'primeng/button';
 import {DialogModule} from 'primeng/dialog';
@@ -15,7 +15,6 @@ import {single} from 'rxjs';
   styleUrl: './auth-section.component.css'
 })
 export class AuthSectionComponent implements OnDestroy {
-  value = ''
   visible = false;
   isLoginMode = true;
 
@@ -23,51 +22,84 @@ export class AuthSectionComponent implements OnDestroy {
     this.visible = true;
   }
 
-  onClose(): void {
-    this.visible = false;
-  }
-
   toggleMode(): void {
     this.isLoginMode = !this.isLoginMode;
+    if (!this.isLoginMode) alert("please make sure you enter your own email id");
   }
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
 
+  // login form
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]
   });
-  loginFormState = signal({email: '', password: ''}); // signal for form state
-  loading = signal(false);
-  errorMessage = signal<string | null>(null);
+  loginFormState = signal({email: '', password: ''}); // signal for login form state
+  loginLoading = signal(false);
+  loginErrorMessage = signal<string | null>(null);
 
-  // subscribe to form changes and update the signal
-  private formSubmission = this.loginForm.valueChanges.subscribe(value => {
-    this.loginFormState.set(value);
+  // subscribe to login form changes and update the signal
+  private loginFormSubmission = this.loginForm.valueChanges.subscribe(loginFormValue => {
+    this.loginFormState.set(loginFormValue);
     console.log(this.loginFormState());
   })
 
-
-  onSubmit() {
+  onLoginSubmit() {
     if (this.loginForm.valid) {
-      this.loading.set(true);
-      this.errorMessage.set(null);
+      this.loginLoading.set(true);
+      this.loginErrorMessage.set(null);
       this.authService.login(this.loginForm.value).subscribe({
         next: response => {
           console.log(response);
         },
         error: err => {
-          this.errorMessage.set(err.message);
+          this.loginErrorMessage.set(err.message);
           console.log(err);
         },
         complete: () => {
-          this.loading.set(false);
+          this.loginLoading.set(false);
         }
       })
     }
   }
+
+  // sign up form
+  signUpForm: FormGroup = this.fb.group({
+    username: ['', [Validators.required]],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required]]
+  });
+  signUpFormState = signal({username: '', email: '', password: ''}); // signal for sign up form state
+
+  private signUpFormSubmission = this.signUpForm.valueChanges.subscribe(signUpFormValue => {
+    this.signUpFormState.set(signUpFormValue);
+    console.log(this.signUpFormState());
+  })
+  signUpLoading = signal(false);
+  signUpErrorMessage = signal<string | null>(null);
+
+  onSignUpSubmit() {
+    if(this.signUpForm.valid){
+      this.signUpLoading.set(true);
+      this.signUpErrorMessage.set(null);
+      this.authService.signUp(this.signUpForm.value).subscribe({
+        next: response => {
+          console.log(response);
+        },
+        error: err => {
+          this.signUpErrorMessage.set(err.message);
+          console.log(err);
+        },
+        complete: () => {
+          this.signUpLoading.set(false);
+        }
+      })
+    }
+  }
+
   ngOnDestroy() {
-    this.formSubmission.unsubscribe();
+    this.loginFormSubmission.unsubscribe();
+    this.signUpFormSubmission.unsubscribe();
   }
 }
