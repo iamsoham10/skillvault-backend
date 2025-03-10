@@ -4,13 +4,15 @@ import {ButtonModule} from 'primeng/button';
 import {DialogModule} from 'primeng/dialog';
 import {InputTextModule} from 'primeng/inputtext';
 import {PasswordModule} from 'primeng/password';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../../services/auth.service';
-import {single} from 'rxjs';
+import {EmailService} from '../../../services/email-service';
+import {OtpSectionComponent} from '../otp-section/otp-section.component';
 
 @Component({
   selector: 'app-auth-section',
-  imports: [DialogModule, ButtonModule, InputTextModule, CommonModule, PasswordModule, FormsModule, ReactiveFormsModule],
+  imports: [DialogModule, ButtonModule, InputTextModule, CommonModule, PasswordModule, ProgressSpinnerModule, FormsModule, ReactiveFormsModule, OtpSectionComponent],
   templateUrl: './auth-section.component.html',
   styleUrl: './auth-section.component.css'
 })
@@ -29,6 +31,7 @@ export class AuthSectionComponent implements OnDestroy {
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private emailService = inject(EmailService);
 
   // login form
   loginForm: FormGroup = this.fb.group({
@@ -52,9 +55,11 @@ export class AuthSectionComponent implements OnDestroy {
       this.authService.login(this.loginForm.value).subscribe({
         next: response => {
           console.log(response);
+          this.loginLoading.set(false);
         },
         error: err => {
           this.loginErrorMessage.set(err.message);
+          this.loginLoading.set(false);
           console.log(err);
         },
         complete: () => {
@@ -78,17 +83,22 @@ export class AuthSectionComponent implements OnDestroy {
   })
   signUpLoading = signal(false);
   signUpErrorMessage = signal<string | null>(null);
+  showOtpForm = false;
 
   onSignUpSubmit() {
     if(this.signUpForm.valid){
       this.signUpLoading.set(true);
       this.signUpErrorMessage.set(null);
+      this.emailService.setEmail(this.signUpForm.value.email);
       this.authService.signUp(this.signUpForm.value).subscribe({
         next: response => {
           console.log(response);
+          this.showOtpForm = true;
+          this.signUpLoading.set(false);
         },
         error: err => {
           this.signUpErrorMessage.set(err.message);
+          this.signUpLoading.set(false);
           console.log(err);
         },
         complete: () => {

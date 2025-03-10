@@ -1,0 +1,18 @@
+<form [formGroup]="otpForm" class="card flex flex-col justify-center items-center">
+  <p class="text-xl font-bold text-text font-primary text-center mb-2">
+    Please check your email for OTP
+  </p>
+  <p-inputotp
+    formControlName="otp"
+    [length]="6"
+  />
+  <p-button
+    label="Verify"
+    (click)="onOtpSubmit()"
+    [text]="true"
+    styleClass="!text-background !w-full !border !mt-5 !border-text !text-lg !font-primary"
+    class="w-full font-bold active:scale-95
+         transition-transform"
+  />
+
+</form>

@@ -8,8 +8,9 @@ import {environment} from '../../environments/environment';
 })
 export class AuthService {
   private http = inject(HttpClient);
-  private LOGIN_URL = environment.LOGIN_URL;
-  private SIGNUP_URL = environment.SIGNUP_URL;
+  private LOGIN_URL = environment.LOGIN_API;
+  private SIGNUP_URL = environment.SIGNUP_API;
+  private OTP_URL = environment.OTP_API;
   accessToken = signal<string | null>(null); // signal for storing access token
 
   login(credentials: {email: string, password: string}): Observable<Object>{
@@ -23,5 +24,9 @@ export class AuthService {
 
   signUp(credentials: {username: string, email: string, password: string}): Observable<Object>{
     return this.http.post(this.SIGNUP_URL, credentials);
+  }
+
+  otp(credentials: {email: string, otp: string}): Observable<Object>{
+    return this.http.post(this.OTP_URL, credentials);
   }
 }

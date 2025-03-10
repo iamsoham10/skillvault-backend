@@ -4,7 +4,7 @@
   maskStyleClass="backdrop-blur-sm"
   styleClass="!border-0 !bg-transparent"
 >
-  <div
+  <div *ngIf="!showOtpForm"
     class="flex flex-col px-8 py-8 gap-6 rounded-2xl bg-gradient-to-br from-secondary to-accent"
   >
     <!-- Title -->
@@ -61,6 +61,9 @@
         class="w-full font-bold active:scale-95
          transition-transform"
       />
+      <div *ngIf="loginLoading()" class="card flex justify-center">
+        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+      </div>
     </form>
 
     <!-- Sign Up Form -->
@@ -124,6 +127,12 @@
         class="w-full font-bold active:scale-95
          transition-transform"
       />
+      <div *ngIf="signUpLoading()" class="card flex justify-center">
+        <p-progress-spinner strokeWidth="8" fill="transparent" animationDuration=".5s" [style]="{ width: '50px', height: '50px' }" />
+      </div>
     </div>
+  </div>
+  <div *ngIf="showOtpForm" class="flex flex-col px-8 py-8 gap-6 rounded-2xl bg-gradient-to-br from-secondary to-accent">
+    <app-otp-section></app-otp-section>
   </div>
 </p-dialog>
