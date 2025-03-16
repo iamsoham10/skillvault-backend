@@ -1,0 +1,44 @@
+<div class="p-6 md:p-8 lg:p-10">
+  <!-- Grid Layout -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 p-6">
+    <!-- Collection Card -->
+    <div
+      *ngFor="let collection of collections"
+      class="flex flex-col bg-subbackground rounded-xl p-6 hover:shadow-xl hover:shadow-accent transition-shadow duration-500 h-[220px] relative"
+    >
+      <!-- Title Section -->
+      <div class="flex justify-between items-start flex-grow">
+        <a
+          class="text-xl font-semibold text-text line-clamp-2 hover:cursor-pointer"
+          (click)="shareCollection()"
+        >
+          {{ collection.title }}
+        </a>
+        <div class="card flex justify-center text-text">
+          <p-menu
+            #menu
+            [model]="items"
+            [popup]="true"
+            [appendTo]="'body'"
+            [baseZIndex]="100"
+          />
+          <button
+            class="w-8 h-8 hover:bg-accent rounded-full flex items-center justify-center transition-colors"
+            (click)="menu.toggle($event)"
+          >
+            <fa-icon [icon]="faDotCircle" class="text-md"></fa-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Resources Count Badge -->
+      <div class="mt-auto">
+        <span
+          class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium text-white bg-accent"
+        >
+          {{ collection.resources.length }} Resources
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

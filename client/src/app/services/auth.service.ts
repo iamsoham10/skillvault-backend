@@ -13,19 +13,20 @@ export class AuthService {
   private LOGIN_URL = environment.LOGIN_API;
   private SIGNUP_URL = environment.SIGNUP_API;
   private OTP_URL = environment.OTP_API;
-  accessToken = signal<string | null>(null); // signal for storing access token
+  private accessTokenKey = 'accessToken';
 
   login(credentials: {email: string, password: string}): Observable<Object>{
     return this.http.post<{data: {tokens: {accessToken: string}}}>(this.LOGIN_URL, credentials, {withCredentials: true}).pipe(
       tap(response => {
-        this.accessToken.set(response.data.tokens.accessToken);
-        console.log(this.accessToken())
+        let s = localStorage.setItem(this.accessTokenKey, JSON.stringify(response));
+        console.log(s);
+        this.router.navigate(['/dashboard']);
       })
     );
   }
 
   logOut(){
-    this.accessToken.set(null);
+    localStorage.removeItem(this.accessTokenKey);
     this.router.navigate(['']);
   }
 
@@ -41,7 +42,7 @@ export class AuthService {
     return this.http.post<{newAccessToken: {accessToken: string}}>(environment.NEW_ACCESS_TOKEN_API, {}, {withCredentials: true})
       .pipe(
         tap(response => {
-          this.accessToken.set(response.newAccessToken.accessToken);
+          localStorage.setItem(this.accessTokenKey, JSON.stringify(response.newAccessToken.accessToken));
         })
       )
   }

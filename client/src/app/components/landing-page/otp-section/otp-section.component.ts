@@ -38,6 +38,7 @@ export class OtpSectionComponent implements OnDestroy {
       this.authService.otp(otpValidationObject).subscribe({
         next: response => {
           console.log(response);
+
         },
         error: err => {
           console.log(err);

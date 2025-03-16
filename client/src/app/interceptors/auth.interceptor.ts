@@ -5,7 +5,7 @@ import {catchError, Observable, switchMap, throwError} from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
   const authService = inject(AuthService);
-  const accessToken = authService.accessToken();
+  const accessToken = localStorage.getItem('accessToken');
 
   // Attach access token to request headers if available
   if (accessToken) {
@@ -38,8 +38,7 @@ const handleAccessTokens = (
   return authService.getAccessToken().pipe(
     switchMap((response: any) => {
       if ('newAccessToken' in response && typeof response.newAccessToken.accessToken === 'string') {
-        authService.accessToken.set(response.newAccessToken.accessToken);
-
+        localStorage.setItem('accessToken', response.newAccessToken.accessToken);
         const clonedReq = req.clone({
           setHeaders: {Authorization: `Bearer ${response.newAccessToken.accessToken}`}
         });
