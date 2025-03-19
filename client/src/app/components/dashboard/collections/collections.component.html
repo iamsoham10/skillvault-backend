@@ -1,9 +1,11 @@
+<app-search (searchResults)="updateCollections($event)"></app-search>
+
 <div class="p-6 md:p-8 lg:p-10">
   <!-- Grid Layout -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 p-6">
     <!-- Collection Card -->
     <div
-      *ngFor="let collection of collections"
+      *ngFor="let collection of collections()"
       class="flex flex-col bg-subbackground rounded-xl p-6 hover:shadow-xl hover:shadow-accent transition-shadow duration-500 h-[220px] relative"
     >
       <!-- Title Section -->
@@ -42,3 +44,21 @@
     </div>
   </div>
 </div>
+
+<!-- pagination code works totally fine -->
+<!-- <div class="pagination flex justify-center mt-4 space-x-2">
+  <button
+    class="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300"
+    [disabled]="page() === 1"
+    (click)="loadPage(page() - 1)"
+  >
+    Previous
+  </button>
+
+  <button
+    class="px-3 py-1 bg-blue-500 text-white rounded"
+    (click)="loadPage(page() + 1)"
+  >
+    Next
+  </button>
+</div> -->

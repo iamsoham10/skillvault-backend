@@ -1,4 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectionStrategy,
+  signal,
+  OnDestroy,
+} from '@angular/core';
 import { CollectionService } from '../../../services/collection.service';
 import { Collection } from '../../../models/collection.model';
 import { NgForOf } from '@angular/common';
@@ -7,19 +14,23 @@ import { faCoffee, faShare } from '@fortawesome/free-solid-svg-icons';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
+import { Subject, takeUntil } from 'rxjs';
+import { SearchComponent } from './search/search.component';
 
 @Component({
   selector: 'app-collections',
-  imports: [NgForOf, FontAwesomeModule, Menu],
+  imports: [NgForOf, FontAwesomeModule, Menu, SearchComponent],
   templateUrl: './collections.component.html',
   styleUrl: './collections.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CollectionsComponent implements OnInit {
-  collections: Collection[] = [];
-  isLoading = false;
-  collectionFetchError: string | null = null;
-  page = 1;
-  limit = 10;
+export class CollectionsComponent implements OnInit, OnDestroy {
+  collections = signal<Collection[]>([]);
+  isLoading = signal(false);
+  collectionFetchError = signal<string | null>(null);
+  private destroy$ = new Subject<void>();
+  page = signal(1);
+  limit = signal(10);
   faCoffee = faCoffee;
   faDotCircle = faEllipsisV;
   faShare = faShare;
@@ -56,20 +67,37 @@ export class CollectionsComponent implements OnInit {
     console.log('Share collection');
   }
 
+  loadPage(newPage: number): void {
+    this.page.set(newPage);
+    this.loadCollections();
+  }
+
   loadCollections(): void {
-    this.isLoading = true;
-    this.collectionFetchError = null;
-    this.collectionsService.getCollections(this.page, this.limit).subscribe({
-      next: (response) => {
-        this.collections = response.AllCollections.collections;
-        console.log(this.collections);
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.collectionFetchError = 'Failed to load collections';
-        this.isLoading = false;
-        console.log('Error loading collections', err);
-      },
-    });
+    this.isLoading.set(true);
+    this.collectionFetchError.set(null);
+
+    this.collectionsService
+      .getCollections(this.page(), this.limit())
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.collections.set(response.AllCollections.collections);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          this.collectionFetchError.set('Failed to load collections');
+          this.isLoading.set(false);
+          console.error('Error loading collections', err);
+        },
+      });
+  }
+
+  updateCollections(newCollections: Collection[]): void {
+    this.collections.set(newCollections);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
