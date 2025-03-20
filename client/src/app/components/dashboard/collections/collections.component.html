@@ -44,7 +44,10 @@
     </div>
   </div>
 </div>
-
+<app-pagination
+  [totalRecords]="totalRecords()"
+  (pageChange)="loadPage($event)"
+></app-pagination>
 <!-- pagination code works totally fine -->
 <!-- <div class="pagination flex justify-center mt-4 space-x-2">
   <button

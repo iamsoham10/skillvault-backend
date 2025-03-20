@@ -16,10 +16,17 @@ import { MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 import { Subject, takeUntil } from 'rxjs';
 import { SearchComponent } from './search/search.component';
+import { PaginationComponent } from './pagination/pagination.component';
 
 @Component({
   selector: 'app-collections',
-  imports: [NgForOf, FontAwesomeModule, Menu, SearchComponent],
+  imports: [
+    NgForOf,
+    FontAwesomeModule,
+    Menu,
+    SearchComponent,
+    PaginationComponent,
+  ],
   templateUrl: './collections.component.html',
   styleUrl: './collections.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -31,6 +38,7 @@ export class CollectionsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   page = signal(1);
   limit = signal(10);
+  totalRecords = signal(0);
   faCoffee = faCoffee;
   faDotCircle = faEllipsisV;
   faShare = faShare;
@@ -82,6 +90,7 @@ export class CollectionsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           this.collections.set(response.AllCollections.collections);
+          this.totalRecords.set(response.AllCollections.totalNoOfCollections);
           this.isLoading.set(false);
         },
         error: (err) => {

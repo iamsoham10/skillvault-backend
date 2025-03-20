@@ -1,0 +1,29 @@
+<div class="card flex justify-center">
+  <p-paginator
+    styleClass="!bg-subbackground !rounded-full"
+    (onPageChange)="onPageChange($event)"
+    [first]="first"
+    [rows]="rows"
+    [totalRecords]="totalRecords"
+    [showPageLinks]="true"
+    [pageLinkSize]="3"
+  />
+</div>
+
+<!-- pagination code works totally fine -->
+<!-- <div class="pagination flex justify-center mt-4 space-x-2">
+  <button
+    class="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300"
+    [disabled]="page() === 1"
+    (click)="loadPage(page() - 1)"
+  >
+    Previous
+  </button>
+
+  <button
+    class="px-3 py-1 bg-blue-500 text-white rounded"
+    (click)="loadPage(page() + 1)"
+  >
+    Next
+  </button>
+</div> -->

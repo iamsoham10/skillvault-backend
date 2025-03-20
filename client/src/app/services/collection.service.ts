@@ -7,6 +7,7 @@ import { Collection } from '../models/collection.model';
 interface CollectionAPIResponse {
   AllCollections: {
     collections: Collection[];
+    totalNoOfCollections: number;
   };
 }
 interface CollectionSearchAPIResponse {
