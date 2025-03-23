@@ -1,5 +1,5 @@
 <div
-  class="flex justify-between items-center w-full max-w-6xl mx-auto px-16 pt-28"
+  class="flex justify-between items-center w-full max-w-6xl mx-auto"
 >
   <form
     [formGroup]="searchForm"
@@ -27,15 +27,5 @@
     </button>
   </form>
   <div class="card flex justify-center">
-    <p-button
-      pTooltip="New Collection"
-      showDelay="200"
-      hideDelay="200"
-      styleClass="!bg-accent !rounded-full !h-12 !w-12"
-    >
-      <ng-template pTemplate="icon">
-        <fa-icon [icon]="faAdd" class="text-sm"></fa-icon>
-      </ng-template>
-    </p-button>
   </div>
 </div>

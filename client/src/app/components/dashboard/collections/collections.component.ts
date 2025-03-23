@@ -17,6 +17,7 @@ import { Menu } from 'primeng/menu';
 import { Subject, takeUntil } from 'rxjs';
 import { SearchComponent } from './search/search.component';
 import { PaginationComponent } from './pagination/pagination.component';
+import { AddCollectionComponent } from './add-collection/add-collection.component';
 
 @Component({
   selector: 'app-collections',
@@ -26,6 +27,7 @@ import { PaginationComponent } from './pagination/pagination.component';
     Menu,
     SearchComponent,
     PaginationComponent,
+    AddCollectionComponent,
   ],
   templateUrl: './collections.component.html',
   styleUrl: './collections.component.css',
@@ -103,6 +105,13 @@ export class CollectionsComponent implements OnInit, OnDestroy {
 
   updateCollections(newCollections: Collection[]): void {
     this.collections.set(newCollections);
+  }
+
+  onCollectionAdded(newCollection: Collection) {
+    this.collections.update((collection) => {
+      collection.push(newCollection);
+      return collection;
+    });
   }
 
   ngOnDestroy(): void {

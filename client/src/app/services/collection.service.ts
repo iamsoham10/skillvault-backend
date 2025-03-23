@@ -3,6 +3,7 @@ import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Collection } from '../models/collection.model';
+import { jwtDecode } from 'jwt-decode';
 
 interface CollectionAPIResponse {
   AllCollections: {
@@ -12,6 +13,14 @@ interface CollectionAPIResponse {
 }
 interface CollectionSearchAPIResponse {
   collections: Collection[];
+}
+interface CollectionAddResponse {
+  collection: Collection;
+}
+interface DecodedToken {
+  user_id: string;
+  email: string;
+  user_privateID: string;
 }
 
 @Injectable({
@@ -33,6 +42,21 @@ export class CollectionService {
     return this.http.post<CollectionSearchAPIResponse>(
       `${environment.COLLECTION_API}search-collection?search=${search}`,
       {}
+    );
+  }
+
+  addCollection(collectionData: {
+    title: string;
+  }): Observable<CollectionAddResponse> {
+    const accessToken: string | null = localStorage.getItem('accessToken');
+    if (!accessToken) {
+      throw new Error('Access token not found');
+    }
+    const decodedToken: DecodedToken = jwtDecode(accessToken);
+    let userID = decodedToken.user_privateID;
+    return this.http.post<CollectionAddResponse>(
+      `${environment.COLLECTION_API}new-collection?_id=${userID}`, // send _id as query parameter along with the collection title as body
+      collectionData
     );
   }
 }

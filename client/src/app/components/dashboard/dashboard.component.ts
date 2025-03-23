@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { CollectionsComponent } from './collections/collections.component';
-import { SearchComponent } from './collections/search/search.component';
+import {AddCollectionComponent} from './collections/add-collection/add-collection.component';
 
 @Component({
   selector: 'app-dashboard',

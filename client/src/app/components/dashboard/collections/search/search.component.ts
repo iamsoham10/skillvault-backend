@@ -4,7 +4,6 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faAdd, faClose } from '@fortawesome/free-solid-svg-icons';
 import { CollectionService } from '../../../../services/collection.service';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Tooltip } from 'primeng/tooltip';
 import { ButtonModule } from 'primeng/button';
 import { Collection } from '../../../../models/collection.model';
 import { CommonModule } from '@angular/common';
@@ -14,7 +13,6 @@ import { CommonModule } from '@angular/common';
   imports: [
     FontAwesomeModule,
     ButtonModule,
-    Tooltip,
     FormsModule,
     ReactiveFormsModule,
     CommonModule,

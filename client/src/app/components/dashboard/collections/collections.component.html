@@ -1,5 +1,12 @@
-<app-search (searchResults)="updateCollections($event)"></app-search>
-
+<div class="flex justify-between items-center px-28 pt-28">
+  <app-search
+    class="flex-grow"
+    (searchResults)="updateCollections($event)"
+  ></app-search>
+  <app-add-collection
+    (addNewCollection)="onCollectionAdded($event)"
+  ></app-add-collection>
+</div>
 <div class="p-6 md:p-8 lg:p-10">
   <!-- Grid Layout -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 p-6">
@@ -48,20 +55,3 @@
   [totalRecords]="totalRecords()"
   (pageChange)="loadPage($event)"
 ></app-pagination>
-<!-- pagination code works totally fine -->
-<!-- <div class="pagination flex justify-center mt-4 space-x-2">
-  <button
-    class="px-3 py-1 bg-blue-500 text-white rounded disabled:bg-gray-300"
-    [disabled]="page() === 1"
-    (click)="loadPage(page() - 1)"
-  >
-    Previous
-  </button>
-
-  <button
-    class="px-3 py-1 bg-blue-500 text-white rounded"
-    (click)="loadPage(page() + 1)"
-  >
-    Next
-  </button>
-</div> -->
