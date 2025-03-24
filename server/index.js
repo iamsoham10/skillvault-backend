@@ -2,7 +2,8 @@ const express = require("express");
 const connectToDB = require("./config/db");
 const cors = require("cors");
 require("dotenv").config();
-const helmet = require('helmet');
+const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 const userRoutes = require("./routes/userRoutes");
 const resourceRoutes = require("./routes/resourceRoutes");
 const collectionRoutes = require("./routes/collectionRoutes");
@@ -11,9 +12,15 @@ const tokenValidator = require("./middlewares/tokenValidator");
 const recommendationRoutes = require("./services/recommendationService");
 
 const app = express();
+app.use(cookieParser());
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:4200",
+    credentials: true,
+  })
+);
 app.use(helmet());
 app.use(express.json());
 

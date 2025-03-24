@@ -15,37 +15,37 @@ const getUser = async (user_id) => {
 };
 
 const createUser = async ({ username, email, password }) => {
-    const userExist = await User.findOne({ email }).select("user_id");
-    if (userExist) {
-      throw new Error("User already exists");
+  const userExist = await User.findOne({ email }).select("user_id");
+  if (userExist) {
+    throw new Error("User already exists");
+  }
+  const [hashedPassword, user_id] = await Promise.all([
+    bcrypt.hash(password, 10),
+    uuid4(),
+  ]);
+  const newUser = new User({
+    username,
+    email,
+    password: hashedPassword,
+    user_id,
+  });
+  // save the user without otp
+  await newUser.save();
+  // generate and save otp
+  const emailOTPUser = await genOTP.saveOTP(newUser.email);
+  // take the email and otp from the db and send to email service to send email
+  setImmediate(async () => {
+    try {
+      await sendEmail.sendOTPEmail(newUser.email, emailOTPUser);
+    } catch (err) {
+      console.error("Error sending email in background: ", err);
     }
-    const [hashedPassword, user_id] = await Promise.all([
-      bcrypt.hash(password, 10),
-      uuid4(),
-    ]);
-    const newUser = new User({
-      username,
-      email,
-      password: hashedPassword,
-      user_id,
-    });
-    // save the user without otp
-    await newUser.save();
-    // generate and save otp
-    const emailOTPUser = await genOTP.saveOTP(newUser.email);
-    // take the email and otp from the db and send to email service to send email
-    setImmediate(async () => {
-      try {
-        await sendEmail.sendOTPEmail(newUser.email, emailOTPUser);
-      } catch (err) {
-        console.error("Error sending email in background: ", err);
-      }
-    });
-    return {
-      OTPCode: {
-        emailOTPUser,
-      },
-    };
+  });
+  return {
+    OTPCode: {
+      emailOTPUser,
+    },
+  };
 
 };
 
@@ -65,7 +65,7 @@ const verifyOTP = async (email, otp) => {
   }
 };
 
-const loginUser = async ({ email, password }) => {
+const loginUser = async ({ email, password }, res) => {
   try {
     const userExist = await User.findOne({ email }).select(
       "+refreshToken +lastLogin"
@@ -78,11 +78,13 @@ const loginUser = async ({ email, password }) => {
       throw new Error("Invalid password");
     }
     const accessToken = generateAccessToken(userExist);
-    const refreshToken = generateRefreshToken(userExist);
+    const { refreshToken, cookiesOptions } = generateRefreshToken(userExist);
 
     userExist.refreshToken = refreshToken;
     userExist.lastLogin = Date.now();
     await userExist.save();
+    // set refresh token in httpOnly cookie
+    res.cookie('refreshToken', refreshToken, cookiesOptions)
     return {
       user: userExist,
       tokens: {
