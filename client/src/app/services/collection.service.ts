@@ -4,24 +4,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Collection } from '../models/collection.model';
 import { jwtDecode } from 'jwt-decode';
-
-interface CollectionAPIResponse {
-  AllCollections: {
-    collections: Collection[];
-    totalNoOfCollections: number;
-  };
-}
-interface CollectionSearchAPIResponse {
-  collections: Collection[];
-}
-interface CollectionAddResponse {
-  collection: Collection;
-}
-interface DecodedToken {
-  user_id: string;
-  email: string;
-  user_privateID: string;
-}
+import {
+  CollectionAPIResponse,
+  CollectionSearchAPIResponse,
+  CollectionAddResponse,
+  DecodedToken,
+} from '../models/collection.interface';
 
 @Injectable({
   providedIn: 'root',
