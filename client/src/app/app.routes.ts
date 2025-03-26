@@ -11,4 +11,8 @@ export const routes: Routes = [
     loadComponent: () => import("./components/dashboard/dashboard.component").then((c) => c.DashboardComponent),
     canActivate: [authGuard]
   },
+  {
+    path: 'upload',
+    loadComponent: () => import("./components/profile-upload/profile-upload.component").then((c) => c.ProfileUploadComponent)
+  }
 ];
