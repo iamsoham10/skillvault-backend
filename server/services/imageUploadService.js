@@ -32,9 +32,10 @@ const uploadToCloudinary = async (req, res) => {
       stream.end(req.file.buffer);
     });
 
-    res.status(200).json({ success: true, message: 'Image uploaded successfully', imageUrl: result.secure_url });
+    // res.status(200).json({ success: true, message: 'Image uploaded successfully', imageUrl: result.secure_url });
+    return result;
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Error uploading image', error: err.message });
+    throw new Error("Image upload failed");
   }
 };
 

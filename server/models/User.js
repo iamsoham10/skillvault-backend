@@ -24,6 +24,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       index: true
     },
+    profilePicture: {
+      type: String,
+      trim: true,
+      select: false
+    },
     collections: [{
       type: String,
       ref: "Collection",

@@ -97,4 +97,16 @@ const loginUser = async ({ email, password }, res) => {
   }
 };
 
-module.exports = { getUser, createUser, verifyOTP, loginUser };
+const updateUserProfilePicture = async (user_id, profilePicture) => {
+  const updatedUser = await User.findOneAndUpdate(
+    { user_id },
+    { profilePicture },
+    { new: true }
+  );
+  if (!updatedUser) {
+    throw new Error("User not found");
+  }
+  return updatedUser;
+};
+
+module.exports = { getUser, createUser, verifyOTP, loginUser, updateUserProfilePicture };

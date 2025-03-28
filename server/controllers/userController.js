@@ -1,5 +1,6 @@
 const userService = require("../services/userService");
 const tokenService = require("../services/tokenService");
+const imageUploadService = require("../services/imageUploadService");
 const asyncHandler = require("express-async-handler");
 
 const getUserController = asyncHandler(async (req, res) => {
@@ -56,10 +57,25 @@ const otpVerificationController = asyncHandler(async (req, res) => {
   });
 });
 
+const imageUploadController = asyncHandler(async (req, res) => {
+  const { user_id } = req.body;
+  const imageFile = req.file;
+  if (!imageFile || !user_id) {
+    return res.status(400).json({ success: false, message: "Please provide both image and user_id" });
+  }
+  const imageUploadResult = await imageUploadService.uploadToCloudinary(req, res);
+  // console.log(imageUploadResult);
+  const imageUrl = imageUploadResult.secure_url;
+  // console.log("imageUrl", imageUrl);
+  const imageUploadFinal = await userService.updateUserProfilePicture(user_id, imageUrl);
+  res.status(200).json({ success: true, message: "Image uploaded successfully", imageUploadFinal });
+});
+
 module.exports = {
   getUserController,
   createUserController,
   loginUserController,
   refreshTokenController,
   otpVerificationController,
+  imageUploadController,
 };
