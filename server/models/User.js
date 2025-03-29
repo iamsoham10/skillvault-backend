@@ -27,7 +27,6 @@ const userSchema = new mongoose.Schema(
     profilePicture: {
       type: String,
       trim: true,
-      select: false
     },
     collections: [{
       type: String,

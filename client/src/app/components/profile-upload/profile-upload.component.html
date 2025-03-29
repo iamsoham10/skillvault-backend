@@ -12,7 +12,7 @@
   <div
     class="bg-subbackground px-5 py-12 rounded-lg shadow-md text-center mb-20"
   >
-    <h2 class="text-xl font-semibold text-text">Set Your Profile Picture</h2>
+    <h2 class="text-xl font-bold text-accent">Set Your Profile Picture</h2>
     <p class="text-gray-400 text-sm mt-1">
       Choose a profile picture to personalize your account
     </p>
@@ -49,7 +49,7 @@
         #fileInput
         (change)="onFileSelected($event)"
         accept="image/*"
-        style="display: none;"
+        style="display: none"
       />
 
       <button
@@ -67,9 +67,18 @@
         Remove
       </button>
     </div>
-
-    <button class="w-full mt-12 px-4 py-2 text-white bg-gray-500 rounded-lg">
-      Save Profile Picture
+    <button
+      class="w-full mt-6 px-4 py-2 text-white bg-accent rounded-lg"
+      (click)="onSaveClick()"
+    >
+      @if (imageUploadLoading()) {
+      <p-progress-spinner
+        strokeWidth="8"
+        fill="transparent"
+        animationDuration=".5s"
+        [style]="{ width: '25px', height: '30px' }"
+      />
+      } @else { Save Profile Picture }
     </button>
 
     <button

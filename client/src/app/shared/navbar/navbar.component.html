@@ -4,11 +4,12 @@
   <h1 class="text-4xl font-primary font-bold text-accent">SkillVault</h1>
   <button class="mt-2">
     <p-avatar
-      image="https://primefaces.org/cdn/primeng/images/demo/avatar/asiyajavayant.png"
+      image="{{ profileImageUrl }}"
       class="mr-2"
       size="large"
       shape="circle"
       styleClass="hover:shadow-full hover:shadow-white"
+      (click)="getProfileImage()"
     />
   </button>
 </nav>

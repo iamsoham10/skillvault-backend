@@ -4,4 +4,5 @@ export const environment = {
   OTP_API: 'http://localhost:3000/api/user/verify-otp',
   NEW_ACCESS_TOKEN_API: 'http://localhost:3000/api/user/refresh-token',
   COLLECTION_API: 'http://localhost:3000/api/collection/',
+  AUTH_API: 'http://localhost:3000/api/auth/',
 };
