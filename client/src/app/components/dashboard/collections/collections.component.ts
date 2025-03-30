@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { CollectionService } from '../../../services/collection.service';
 import { Collection } from '../../../models/collection.model';
-import { NgForOf } from '@angular/common';
+import { CommonModule, NgForOf } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCoffee, faShare } from '@fortawesome/free-solid-svg-icons';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
@@ -18,6 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { SearchComponent } from './search/search.component';
 import { PaginationComponent } from './pagination/pagination.component';
 import { AddCollectionComponent } from './add-collection/add-collection.component';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
   selector: 'app-collections',
@@ -28,6 +29,8 @@ import { AddCollectionComponent } from './add-collection/add-collection.componen
     SearchComponent,
     PaginationComponent,
     AddCollectionComponent,
+    ProgressSpinnerModule,
+    CommonModule,
   ],
   templateUrl: './collections.component.html',
   styleUrl: './collections.component.css',

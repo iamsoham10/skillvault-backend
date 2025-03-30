@@ -8,6 +8,20 @@
   ></app-add-collection>
 </div>
 <div class="p-6 md:p-8 lg:p-10 font-primary">
+  <div *ngIf="isLoading()" class="mt-12 text-center">
+    <p-progress-spinner
+      strokeWidth="8"
+      fill="transparent"
+      animationDuration=".5s"
+      [style]="{ width: '25px', height: '25px' }"
+    />
+  </div>
+  <div
+    *ngIf="!isLoading() && collections().length === 0"
+    class="mt-12 text-center"
+  >
+    <p class="text-2xl font-semibold text-text">No collections found</p>
+  </div>
   <!-- Grid Layout -->
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 p-6">
     <!-- Collection Card -->
