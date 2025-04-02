@@ -47,7 +47,21 @@ export class AuthService {
   }
 
   otp(credentials: { email: string; otp: string }): Observable<Object> {
-    return this.http.post(this.OTP_URL, credentials);
+    return this.http
+      .post<{ user: { tokens: { accessToken: string } } }>(
+        this.OTP_URL,
+        credentials,
+        { withCredentials: true }
+      )
+      .pipe(
+        tap((response) => {
+          localStorage.setItem(
+            this.accessTokenKey,
+            response.user.tokens.accessToken
+          );
+          this.router.navigate(['/dashboard']);
+        })
+      );
   }
 
   getAccessToken(): Observable<Object> {

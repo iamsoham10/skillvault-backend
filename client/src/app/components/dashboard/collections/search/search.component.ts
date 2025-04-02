@@ -1,4 +1,11 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  inject,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { faAdd, faClose } from '@fortawesome/free-solid-svg-icons';
@@ -7,6 +14,7 @@ import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { Collection } from '../../../../models/collection.model';
 import { CommonModule } from '@angular/common';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-search',
@@ -19,6 +27,7 @@ import { CommonModule } from '@angular/common';
   ],
   templateUrl: './search.component.html',
   styleUrl: './search.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchComponent implements OnInit {
   @Output() searchResults = new EventEmitter<Collection[]>();
@@ -26,6 +35,7 @@ export class SearchComponent implements OnInit {
   faAdd = faAdd;
   faCancel = faClose;
   searchValue = '';
+  private destroy$ = new Subject<void>();
   private searchService = inject(CollectionService);
   private fb = inject(FormBuilder);
 
@@ -38,6 +48,7 @@ export class SearchComponent implements OnInit {
     if (searchTerm) {
       this.searchService
         .searchCollections(this.searchValue)
+        .pipe(takeUntil(this.destroy$))
         .subscribe((searchAPIResults) => {
           this.searchResults.emit(searchAPIResults.collections);
         });
@@ -58,8 +69,16 @@ export class SearchComponent implements OnInit {
     // clear the search and refetch data
     this.searchForm.reset();
     this.searchValue = '';
-    this.searchService.getCollections(1, 10).subscribe((collections) => {
-      this.searchResults.emit(collections.AllCollections.collections);
-    });
+    this.searchService
+      .getCollections(1, 10)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((collections) => {
+        this.searchResults.emit(collections.AllCollections.collections);
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

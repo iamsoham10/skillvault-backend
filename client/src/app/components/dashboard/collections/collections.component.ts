@@ -37,7 +37,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CollectionsComponent implements OnInit, OnDestroy {
-  collections = signal<Collection[]>([]);
+  collections = signal<Collection[] | undefined>(undefined);
   isLoading = signal(false);
   collectionFetchError = signal<string | null>(null);
   private destroy$ = new Subject<void>();
@@ -112,8 +112,12 @@ export class CollectionsComponent implements OnInit, OnDestroy {
 
   onCollectionAdded(newCollection: Collection) {
     this.collections.update((collection) => {
-      collection.push(newCollection);
-      return collection;
+      if (collection === undefined) {
+        return [newCollection];
+      } else {
+        collection.push(newCollection);
+        return collection;
+      }
     });
   }
 
