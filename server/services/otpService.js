@@ -26,18 +26,18 @@ const saveOTP = async (email) => {
 };
 
 const validateOTP = async (email, otp) => {
-  try{
+  try {
     // get otp from redis
     const storedOTP = await client.get(email);
-    if(!storedOTP){
+    if (!storedOTP) {
       throw new Error("OTP expired");
     }
-    if(storedOTP !== otp){
+    if (storedOTP !== otp) {
       throw new Error('Invalid OTP');
     }
     await client.del(email);
     return true;
-  } catch(err){
+  } catch (err) {
     throw new Error('Error validating OTP');
   }
 }

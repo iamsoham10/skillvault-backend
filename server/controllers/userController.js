@@ -49,7 +49,7 @@ const refreshTokenController = asyncHandler(async (req, res) => {
 
 const otpVerificationController = asyncHandler(async (req, res) => {
   const { email, otp } = req.body;
-  const verifiedUser = await userService.verifyOTP(email, otp);
+  const verifiedUser = await userService.verifyOTP({ email, otp }, res);
   res.status(200).json({
     success: true,
     message: "User verified successfully",
@@ -61,14 +61,31 @@ const imageUploadController = asyncHandler(async (req, res) => {
   const { user_id } = req.body;
   const imageFile = req.file;
   if (!imageFile || !user_id) {
-    return res.status(400).json({ success: false, message: "Please provide both image and user_id" });
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Please provide both image and user_id",
+      });
   }
-  const imageUploadResult = await imageUploadService.uploadToCloudinary(req, res);
+  const imageUploadResult = await imageUploadService.uploadToCloudinary(
+    req,
+    res
+  );
   // console.log(imageUploadResult);
   const imageUrl = imageUploadResult.secure_url;
   // console.log("imageUrl", imageUrl);
-  const imageUploadFinal = await userService.updateUserProfilePicture(user_id, imageUrl);
-  res.status(200).json({ success: true, message: "Image uploaded successfully", imageUploadFinal });
+  const imageUploadFinal = await userService.updateUserProfilePicture(
+    user_id,
+    imageUrl
+  );
+  res
+    .status(200)
+    .json({
+      success: true,
+      message: "Image uploaded successfully",
+      imageUploadFinal,
+    });
 });
 
 module.exports = {

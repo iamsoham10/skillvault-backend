@@ -4,7 +4,10 @@ const { v4: uuid4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const genOTP = require("./otpService");
 const sendEmail = require("./emailService");
-const { generateAccessToken, generateRefreshToken } = require("../services/tokenService");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../services/tokenService");
 
 const getUser = async (user_id) => {
   const user = await User.findOne({ user_id: user_id });
@@ -46,12 +49,13 @@ const createUser = async ({ username, email, password }) => {
       emailOTPUser,
     },
   };
-
 };
 
-const verifyOTP = async (email, otp) => {
+const verifyOTP = async ({ email, otp }, res) => {
   try {
-    const user = await User.findOne({ email }).select("user_id");
+    const user = await User.findOne({ email }).select(
+      "user_id +refreshToken +lastLogin"
+    );
     if (!user) {
       throw new Error("User not found");
     }
@@ -59,8 +63,23 @@ const verifyOTP = async (email, otp) => {
     if (!userOTP) {
       throw new Error("Invalid OTP");
     }
-    return user;
+    const accessToken = generateAccessToken(user);
+    const { refreshToken, cookiesOptions } = generateRefreshToken(user);
+
+    user.refreshToken = refreshToken;
+    user.lastLogin = Date.now();
+    await user.save();
+    // set refresh token in httpOnly cookie
+    res.cookie("refreshToken", refreshToken, cookiesOptions);
+    return {
+      user,
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
+    };
   } catch (err) {
+    console.log("Error verifying OTP: ", err);
     throw new Error("OTP verification failed");
   }
 };
@@ -84,7 +103,7 @@ const loginUser = async ({ email, password }, res) => {
     userExist.lastLogin = Date.now();
     await userExist.save();
     // set refresh token in httpOnly cookie
-    res.cookie('refreshToken', refreshToken, cookiesOptions)
+    res.cookie("refreshToken", refreshToken, cookiesOptions);
     return {
       user: userExist,
       tokens: {
@@ -109,4 +128,10 @@ const updateUserProfilePicture = async (user_id, profilePicture) => {
   return updatedUser;
 };
 
-module.exports = { getUser, createUser, verifyOTP, loginUser, updateUserProfilePicture };
+module.exports = {
+  getUser,
+  createUser,
+  verifyOTP,
+  loginUser,
+  updateUserProfilePicture,
+};
