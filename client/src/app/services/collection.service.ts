@@ -47,4 +47,10 @@ export class CollectionService {
       collectionData
     );
   }
+
+  deleteCollection(collection_id: string, user_id: string): Observable<Object> {
+    return this.http.delete(
+      `${environment.COLLECTION_API}remove-collection?collection_id=${collection_id}&_id=${user_id}`
+    );
+  }
 }

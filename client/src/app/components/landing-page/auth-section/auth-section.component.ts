@@ -15,6 +15,7 @@ import {
 import { AuthService } from '../../../services/auth.service';
 import { EmailService } from '../../../services/email.service';
 import { OtpSectionComponent } from '../otp-section/otp-section.component';
+import { UserService } from '../../../services/user.service';
 
 @Component({
   selector: 'app-auth-section',
@@ -49,6 +50,7 @@ export class AuthSectionComponent implements OnDestroy {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private emailService = inject(EmailService);
+  private userService = inject(UserService);
 
   // login form
   loginForm: FormGroup = this.fb.group({
@@ -74,6 +76,7 @@ export class AuthSectionComponent implements OnDestroy {
       this.authService.login(this.loginForm.value).subscribe({
         next: (response) => {
           console.log(response);
+          this.userService.setUserID(response.data.user._id);
           this.loginLoading.set(false);
         },
         error: (err) => {

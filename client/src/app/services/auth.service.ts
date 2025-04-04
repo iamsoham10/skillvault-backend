@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
+import { userLogInResponse } from '../models/user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -15,13 +16,14 @@ export class AuthService {
   private OTP_URL = environment.OTP_API;
   private accessTokenKey = 'accessToken';
 
-  login(credentials: { email: string; password: string }): Observable<Object> {
+  login(credentials: {
+    email: string;
+    password: string;
+  }): Observable<userLogInResponse> {
     return this.http
-      .post<{ data: { tokens: { accessToken: string } } }>(
-        this.LOGIN_URL,
-        credentials,
-        { withCredentials: true }
-      )
+      .post<userLogInResponse>(this.LOGIN_URL, credentials, {
+        withCredentials: true,
+      })
       .pipe(
         tap((response) => {
           localStorage.setItem(
