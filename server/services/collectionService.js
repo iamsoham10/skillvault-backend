@@ -74,11 +74,13 @@ const deleteCollection = async ({ collection_id, user_id, _id }) => {
   // delete all the resources belonging to this collection
   await Resource.deleteMany({ collection_id });
   await client.del(`collection:${collection_id}`);
-  const keysToDelete = await client.keys(
-    `resource:${user_id}:collection_id:${collection_id}:*`
-  );
-  if (keysToDelete.length > 0) {
-    await client.del(keysToDelete);
+  const collectionKeysToDelete = await client.keys(`collections:${user_id}:*`);
+  if (collectionKeysToDelete.length > 0) {
+    await client.del(collectionKeysToDelete);
+  }
+  const searchKeysToDelete = await client.keys(`search:${user_id}:*`);
+  if (searchKeysToDelete.length > 0) {
+    await client.del(searchKeysToDelete);
   }
   // delete the collection
   const deletedCollection = await Collection.findByIdAndDelete(collection_id);
