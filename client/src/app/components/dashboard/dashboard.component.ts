@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { CollectionsComponent } from './collections/collections.component';
-import {AddCollectionComponent} from './collections/add-collection/add-collection.component';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
-  imports: [NavbarComponent, CollectionsComponent],
+  imports: [NavbarComponent, CollectionsComponent, RouterOutlet],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
