@@ -12,8 +12,6 @@ import { CommonModule, NgForOf } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCoffee, faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
-import { MenuItem } from 'primeng/api';
-import { Menu } from 'primeng/menu';
 import { Subject, takeUntil } from 'rxjs';
 import { SearchComponent } from './search/search.component';
 import { PaginationComponent } from './pagination/pagination.component';
@@ -48,7 +46,6 @@ export class CollectionsComponent implements OnInit, OnDestroy {
   faDotCircle = faEllipsisV;
   faShare = faShare;
   faTrash = faTrash;
-  items: MenuItem[] | undefined;
 
   private collectionsService = inject(CollectionService);
   private userService = inject(UserService);
@@ -67,10 +64,24 @@ export class CollectionsComponent implements OnInit, OnDestroy {
     console.log('deleted');
     const collection_ID = collection._id;
     const user_ID = this.userService.getUserID();
-    console.log(collection_ID, user_ID);
     this.collectionsService
       .deleteCollection(collection_ID, user_ID ?? '')
-      .subscribe();
+      .subscribe({
+        next: () => {
+          console.log('Collection deleted successfully');
+          this.collections.update((currentCollections) => {
+            if (currentCollections) {
+              return currentCollections.filter(
+                (collection) => collection._id !== collection_ID
+              );
+            }
+            return currentCollections;
+          });
+        },
+        error: (err) => {
+          console.error('Error deleting collection', err);
+        },
+      });
     this.openMenu = null;
   }
 

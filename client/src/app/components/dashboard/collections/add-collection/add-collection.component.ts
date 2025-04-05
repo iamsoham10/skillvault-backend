@@ -78,6 +78,7 @@ export class AddCollectionComponent {
             console.log(response);
             this.addNewCollection.emit(response.collection);
             this.showBottomRightSuccess();
+            this.collectionForm.reset();
           },
           error: (err) => {
             console.log(err);
