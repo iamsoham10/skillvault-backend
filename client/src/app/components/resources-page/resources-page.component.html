@@ -1,1 +1,27 @@
-<h1>Hello From Resources</h1>
+<div class="bg-gradient-to-br from-slate-800 to-gray-900 min-h-screen">
+  <app-navbar></app-navbar>
+  <main
+    class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 pt-28 p-12"
+  >
+    <div
+      *ngFor="let resource of userResources(); let i = index"
+      [ngClass]="{
+        'h-auto': i % 3 !== 0,
+        'h-[400px]': i % 3 === 0
+      }"
+      class="mb-4 break-inside-avoid overflow-hidden rounded-lg group relative"
+    >
+      <img
+        [src]="resource.thumbnail"
+        [alt]="resource.title"
+        loading="lazy"
+        class="w-full h-full object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
+      />
+      <p
+        class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent text-white text-sm font-primary font-bold p-2"
+      >
+        {{ resource.title }}
+      </p>
+    </div>
+  </main>
+</div>

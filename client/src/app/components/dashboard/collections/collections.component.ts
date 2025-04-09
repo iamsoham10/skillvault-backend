@@ -18,6 +18,7 @@ import { PaginationComponent } from './pagination/pagination.component';
 import { AddCollectionComponent } from './add-collection/add-collection.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { UserService } from '../../../services/user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-collections',
@@ -46,7 +47,7 @@ export class CollectionsComponent implements OnInit, OnDestroy {
   faDotCircle = faEllipsisV;
   faShare = faShare;
   faTrash = faTrash;
-
+  private router = inject(Router);
   private collectionsService = inject(CollectionService);
   private userService = inject(UserService);
 
@@ -88,6 +89,12 @@ export class CollectionsComponent implements OnInit, OnDestroy {
   shareCollection() {
     console.log('Share collection');
     this.openMenu = null;
+  }
+
+  showResources(collection: Collection) {
+    const collection_ID = collection._id;
+    console.log(collection_ID);
+    this.router.navigate(['/dashboard/resources', collection_ID]);
   }
 
   loadPage(newPage: number): void {

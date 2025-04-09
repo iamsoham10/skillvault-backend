@@ -3,6 +3,7 @@ import {
   Component,
   EventEmitter,
   inject,
+  Input,
   OnInit,
   Output,
 } from '@angular/core';
@@ -15,6 +16,7 @@ import { ButtonModule } from 'primeng/button';
 import { Collection } from '../../../../models/collection.model';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
+import { ResourceService } from '../../../../services/resource.service';
 
 @Component({
   selector: 'app-search',
@@ -31,12 +33,14 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class SearchComponent implements OnInit {
   @Output() searchResults = new EventEmitter<Collection[]>();
+  @Input() searchType: 'collection' | 'resource' = 'collection';
   faSearch = faSearch;
   faAdd = faAdd;
   faCancel = faClose;
   searchValue = '';
   private destroy$ = new Subject<void>();
   private searchService = inject(CollectionService);
+  private resourceService = inject(ResourceService);
   private fb = inject(FormBuilder);
 
   searchForm = this.fb.nonNullable.group({
@@ -46,12 +50,22 @@ export class SearchComponent implements OnInit {
   searchCollections() {
     const searchTerm = this.searchForm.value.searchTerm?.trim();
     if (searchTerm) {
-      this.searchService
-        .searchCollections(this.searchValue)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((searchAPIResults) => {
-          this.searchResults.emit(searchAPIResults.collections);
-        });
+      if (this.searchType === 'collection') {
+        this.searchService
+          .searchCollections(this.searchValue)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((searchAPIResults) => {
+            this.searchResults.emit(searchAPIResults.collections);
+          });
+      } else if (this.searchType === 'resource') {
+        this.resourceService
+          .searchResources('6fdsa34', searchTerm)
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((searchAPIResults) => {
+            // this.searchResults.emit(searchAPIResults)
+            console.log(searchAPIResults.resources);
+          });
+      }
     }
   }
 

@@ -7,7 +7,6 @@ export class UserService {
   private readonly userID_KEY = 'userID';
   setUserID(id: string): void {
     localStorage.setItem(this.userID_KEY, id);
-    console.log('id set', id);
   }
 
   getUserID(): string | null {

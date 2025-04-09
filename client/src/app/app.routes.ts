@@ -18,11 +18,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'dashboard/resources',
+    path: 'dashboard/resources/:collection_ID',
     loadComponent: () =>
       import('./components/resources-page/resources-page.component').then(
         (c) => c.ResourcesPageComponent
       ),
+    canActivate: [authGuard],
   },
   {
     path: 'upload',
