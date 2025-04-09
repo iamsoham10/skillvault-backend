@@ -93,7 +93,6 @@ export class CollectionsComponent implements OnInit, OnDestroy {
 
   showResources(collection: Collection) {
     const collection_ID = collection._id;
-    console.log(collection_ID);
     this.router.navigate(['/dashboard/resources', collection_ID]);
   }
 
