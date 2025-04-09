@@ -1,21 +1,29 @@
-import {inject} from '@angular/core';
-import {HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest} from '@angular/common/http';
-import {AuthService} from '../services/auth.service';
-import {catchError, Observable, switchMap, throwError} from 'rxjs';
+import { inject } from '@angular/core';
+import {
+  HttpEvent,
+  HttpHandlerFn,
+  HttpInterceptorFn,
+  HttpRequest,
+} from '@angular/common/http';
+import { AuthService } from '../services/auth.service';
+import { catchError, Observable, switchMap, throwError } from 'rxjs';
 
-export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
+export const authInterceptor: HttpInterceptorFn = (
+  req: HttpRequest<any>,
+  next: HttpHandlerFn
+): Observable<HttpEvent<any>> => {
   const authService = inject(AuthService);
   const accessToken = localStorage.getItem('accessToken');
 
   // Attach access token to request headers if available
   if (accessToken) {
     req = req.clone({
-      setHeaders: {Authorization: `Bearer ${accessToken}`}
+      setHeaders: { Authorization: `Bearer ${accessToken}` },
     });
   }
 
   return next(req).pipe(
-    catchError(error => {
+    catchError((error) => {
       if (error.status === 401) {
         return handleAccessTokens(req, next, authService); // ✅ Call refresh logic
       }
@@ -36,17 +44,22 @@ const handleAccessTokens = (
   authService: AuthService
 ): Observable<HttpEvent<unknown>> => {
   return authService.getAccessToken().pipe(
-    switchMap((response: any) => {
-      if ('newAccessToken' in response && typeof response.newAccessToken.accessToken === 'string') {
-        localStorage.setItem('accessToken', response.newAccessToken.accessToken);
-        const clonedReq = req.clone({
-          setHeaders: {Authorization: `Bearer ${response.newAccessToken.accessToken}`}
-        });
-
-        return next(clonedReq);
+    switchMap((response) => {
+      if (!response?.newAccessToken?.accessToken) {
+        return throwError(() => new Error('Invalid token response'));
       }
-      return throwError(() => new Error('Invalid token response'));
+
+      const newToken = response.newAccessToken.accessToken;
+      const clonedReq = req.clone({
+        setHeaders: { Authorization: `Bearer ${newToken}` },
+      });
+
+      return next(clonedReq);
     }),
-    catchError(err => throwError(() => err))
+    catchError((err) => {
+      // If refresh token fails, redirect to login
+      authService.logOut();
+      return throwError(() => err);
+    })
   );
 };

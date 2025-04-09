@@ -66,7 +66,7 @@ export class AuthService {
       );
   }
 
-  getAccessToken(): Observable<Object> {
+  getAccessToken(): Observable<{ newAccessToken: { accessToken: string } }> {
     return this.http
       .post<{ newAccessToken: { accessToken: string } }>(
         environment.NEW_ACCESS_TOKEN_API,
@@ -75,10 +75,12 @@ export class AuthService {
       )
       .pipe(
         tap((response) => {
-          localStorage.setItem(
-            this.accessTokenKey,
-            JSON.stringify(response.newAccessToken.accessToken)
-          );
+          if (response?.newAccessToken?.accessToken) {
+            localStorage.setItem(
+              this.accessTokenKey,
+              response.newAccessToken.accessToken
+            );
+          }
         })
       );
   }
