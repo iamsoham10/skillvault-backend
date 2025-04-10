@@ -1,11 +1,19 @@
 <div class="bg-gradient-to-br from-slate-800 to-gray-900 min-h-screen">
   <app-navbar></app-navbar>
+  <div *ngIf="isResourcesLoading()" class="text-center pt-28">
+    <p-progress-spinner
+      strokeWidth="8"
+      fill="transparent"
+      animationDuration=".5s"
+      [style]="{ width: '25px', height: '25px' }"
+    />
+  </div>
   <main
     class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 pt-28 p-12"
   >
     <div
       *ngFor="let resource of userResources(); let i = index"
-      class="mb-8 break-inside-avoid"
+      class="mb-8 break-inside-avoid group relative animate-fadeInFromBottom"
     >
       <!-- Card container -->
       <div class="rounded-lg overflow-hidden relative group">
@@ -56,4 +64,8 @@
       </div>
     </div>
   </main>
+  <app-pagination
+    [totalRecords]="totalResources()"
+    (pageChange)="loadPage($event)"
+  ></app-pagination>
 </div>

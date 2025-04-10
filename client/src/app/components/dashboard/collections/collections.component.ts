@@ -14,7 +14,7 @@ import { faCoffee, faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
 import { Subject, takeUntil } from 'rxjs';
 import { SearchComponent } from './search/search.component';
-import { PaginationComponent } from './pagination/pagination.component';
+import { PaginationComponent } from '../../../shared/navbar/pagination/pagination.component';
 import { AddCollectionComponent } from './add-collection/add-collection.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { UserService } from '../../../services/user.service';
