@@ -3,7 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { CollectionSearchAPIResponse } from '../models/collection.interface';
 import { Observable } from 'rxjs';
 import {
-  ResourcecAPIResponse,
+  ResourceAddAPIResonse,
+  ResourceAPIResponse,
   ResourceSearchAPIResponse,
 } from '../models/resource.interface';
 import { environment } from '../../environments/environment';
@@ -18,8 +19,8 @@ export class ResourceService {
     collection_id: string,
     page: number,
     limit: number
-  ): Observable<ResourcecAPIResponse> {
-    return this.http.get<ResourcecAPIResponse>(
+  ): Observable<ResourceAPIResponse> {
+    return this.http.get<ResourceAPIResponse>(
       `${environment.RESOURCE_API}all-resources?collection_id=${collection_id}&page=${page}&limit=${limit}`
     );
   }
@@ -31,6 +32,21 @@ export class ResourceService {
     return this.http.post<ResourceSearchAPIResponse>(
       `${environment.RESOURCE_API}search?collection_id=${collection_id}&search=${search}`,
       {}
+    );
+  }
+
+  addResource(
+    collection_ID: string,
+    resourceData: {
+      title: string;
+      url: string;
+      description: string;
+      tags: Array<string>;
+    }
+  ): Observable<ResourceAddAPIResonse> {
+    return this.http.post<ResourceAddAPIResonse>(
+      `${environment.RESOURCE_API}new-resource?collection_id=${collection_ID}`,
+      resourceData
     );
   }
 }

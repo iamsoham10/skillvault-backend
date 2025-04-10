@@ -7,6 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { PaginationComponent } from '../../shared/navbar/pagination/pagination.component';
+import { AddResourceComponent } from './add-resource/add-resource.component';
 
 @Component({
   selector: 'app-resources-page',
@@ -15,6 +16,7 @@ import { PaginationComponent } from '../../shared/navbar/pagination/pagination.c
     CommonModule,
     ProgressSpinnerModule,
     PaginationComponent,
+    AddResourceComponent,
   ],
   templateUrl: './resources-page.component.html',
   styleUrl: './resources-page.component.css',
@@ -50,6 +52,10 @@ export class ResourcesPageComponent implements OnInit {
   }
   loadPage(newPage: number): void {
     this.page.set(newPage);
+    this.loadResources(this.collection_ID!);
+  }
+
+  onResourceAdded(newResource: Resource) {
     this.loadResources(this.collection_ID!);
   }
 
