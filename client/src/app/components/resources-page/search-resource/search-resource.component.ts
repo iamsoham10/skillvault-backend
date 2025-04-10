@@ -1,25 +1,16 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  inject,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { faAdd, faClose } from '@fortawesome/free-solid-svg-icons';
-import { CollectionService } from '../../../../services/collection.service';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { Collection } from '../../../../models/collection.model';
-import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { faAdd, faClose, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Subject, takeUntil } from 'rxjs';
-import { ResourceService } from '../../../../services/resource.service';
+import { ResourceService } from '../../../services/resource.service';
+import { FormBuilder } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ButtonModule } from 'primeng/button';
+import { CommonModule } from '@angular/common';
+import { Resource } from '../../../models/resource.model';
 
 @Component({
-  selector: 'app-search',
+  selector: 'app-search-resource',
   imports: [
     FontAwesomeModule,
     ButtonModule,
@@ -27,18 +18,17 @@ import { ResourceService } from '../../../../services/resource.service';
     ReactiveFormsModule,
     CommonModule,
   ],
-  templateUrl: './search.component.html',
-  styleUrl: './search.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './search-resource.component.html',
+  styleUrl: './search-resource.component.css',
 })
-export class SearchComponent implements OnInit {
-  @Output() searchResults = new EventEmitter<Collection[]>();
+export class SearchResourceComponent {
+  @Output() searchResults = new EventEmitter<Resource[]>();
+  @Input() userCollection_id: string | null = null;
   faSearch = faSearch;
   faAdd = faAdd;
   faCancel = faClose;
   searchValue = '';
   private destroy$ = new Subject<void>();
-  private searchService = inject(CollectionService);
   private resourceService = inject(ResourceService);
   private fb = inject(FormBuilder);
 
@@ -49,11 +39,11 @@ export class SearchComponent implements OnInit {
   searchCollections() {
     const searchTerm = this.searchForm.value.searchTerm?.trim();
     if (searchTerm) {
-      this.searchService
-        .searchCollections(this.searchValue)
+      this.resourceService
+        .searchResources(this.userCollection_id!, this.searchValue)
         .pipe(takeUntil(this.destroy$))
         .subscribe((searchAPIResults) => {
-          this.searchResults.emit(searchAPIResults.collections);
+          this.searchResults.emit(searchAPIResults.resources);
         });
     }
   }
@@ -72,11 +62,11 @@ export class SearchComponent implements OnInit {
     // clear the search and refetch data
     this.searchForm.reset();
     this.searchValue = '';
-    this.searchService
-      .getCollections(1, 10)
+    this.resourceService
+      .getResources(this.userCollection_id!, 1, 10)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((collections) => {
-        this.searchResults.emit(collections.AllCollections.collections);
+      .subscribe((clearSearch) => {
+        this.searchResults.emit(clearSearch.resources.resources);
       });
   }
 

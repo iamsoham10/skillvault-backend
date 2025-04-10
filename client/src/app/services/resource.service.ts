@@ -29,9 +29,8 @@ export class ResourceService {
     collection_id: string,
     search: string
   ): Observable<ResourceSearchAPIResponse> {
-    return this.http.post<ResourceSearchAPIResponse>(
-      `${environment.RESOURCE_API}search?collection_id=${collection_id}&search=${search}`,
-      {}
+    return this.http.get<ResourceSearchAPIResponse>(
+      `${environment.RESOURCE_API}search?collection_id=${collection_id}&search=${search}`
     );
   }
 

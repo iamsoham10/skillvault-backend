@@ -8,6 +8,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { PaginationComponent } from '../../shared/navbar/pagination/pagination.component';
 import { AddResourceComponent } from './add-resource/add-resource.component';
+import { SearchResourceComponent } from './search-resource/search-resource.component';
 
 @Component({
   selector: 'app-resources-page',
@@ -17,6 +18,7 @@ import { AddResourceComponent } from './add-resource/add-resource.component';
     ProgressSpinnerModule,
     PaginationComponent,
     AddResourceComponent,
+    SearchResourceComponent,
   ],
   templateUrl: './resources-page.component.html',
   styleUrl: './resources-page.component.css',
@@ -57,6 +59,10 @@ export class ResourcesPageComponent implements OnInit {
 
   onResourceAdded(newResource: Resource) {
     this.loadResources(this.collection_ID!);
+  }
+
+  onSearchResults(results: Resource[]) {
+    this.userResources.set(results);
   }
 
   ngOnInit(): void {
