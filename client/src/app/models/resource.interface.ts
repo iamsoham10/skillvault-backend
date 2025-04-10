@@ -14,3 +14,16 @@ export interface ResourceAddAPIResonse {
 export interface ResourceSearchAPIResponse {
   resources: Resource[];
 }
+
+export interface ResourceRecommendations {
+  data: {
+    recommendations: [
+      [
+        {
+          link: string;
+          title: string;
+        }
+      ]
+    ];
+  };
+}

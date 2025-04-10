@@ -9,6 +9,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { PaginationComponent } from '../../shared/navbar/pagination/pagination.component';
 import { AddResourceComponent } from './add-resource/add-resource.component';
 import { SearchResourceComponent } from './search-resource/search-resource.component';
+import { RecommendationService } from '../../services/recommendation.service';
 
 @Component({
   selector: 'app-resources-page',
@@ -25,6 +26,9 @@ import { SearchResourceComponent } from './search-resource/search-resource.compo
 })
 export class ResourcesPageComponent implements OnInit {
   userResources = signal<Resource[] | undefined>(undefined);
+  recommendedResources = signal<
+    [[{ title: string; link: string }]] | undefined
+  >(undefined);
   collection_ID: string | null = null;
   isResourcesLoading = signal(false);
   totalResources = signal(0);
@@ -33,6 +37,7 @@ export class ResourcesPageComponent implements OnInit {
   private destroy$ = new Subject<void>();
   private route = inject(ActivatedRoute);
   private resourceService = inject(ResourceService);
+  private recommendationService = inject(RecommendationService);
 
   loadResources(collection_ID: string): void {
     this.isResourcesLoading.set(true);
@@ -63,6 +68,17 @@ export class ResourcesPageComponent implements OnInit {
 
   onSearchResults(results: Resource[]) {
     this.userResources.set(results);
+  }
+
+  fetchRecommendations() {
+    this.recommendationService
+      .getRecommendations(this.collection_ID!)
+      .subscribe({
+        next: (response) => {
+          console.log(response);
+          this.recommendedResources.set(response.data.recommendations);
+        },
+      });
   }
 
   ngOnInit(): void {

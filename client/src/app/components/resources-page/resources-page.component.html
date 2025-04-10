@@ -84,6 +84,19 @@
       </div>
     </div>
   </main>
+  <!-- <div class="text-center py-8">
+    <button
+      class="text-bold font-medium font-primary bg-accent text-white px-3 py-2 rounded-lg hover:opacity-70 transition"
+      (click)="fetchRecommendations()"
+    >
+      Get Recommendations
+    </button>
+    <div *ngFor="let recommendation of recommendedResources()">
+      <div>
+        <p>{{ recommendation }}</p>
+      </div>
+    </div>
+  </div> -->
   <app-pagination
     [totalRecords]="totalResources()"
     (pageChange)="loadPage($event)"
