@@ -44,10 +44,20 @@ const createResource = async ({ title, url, description, user_id, tags, collecti
                 $push: { resources: newResource._id }
             }),
         ]);
-        const keysToSearch = await client.keys(`search:${user_id}:collection_id:${collection_id}:*`);
-        if (keysToSearch.length > 0) {
-            await client.del(keysToSearch);
+        const [keysToDeleteSearch, keysToDeleteResource] = await Promise.all([
+            client.keys(`search:${user_id}:collection_id:${collection_id}:*`),
+            client.keys(`resource:${user_id}:collection_id:${collection_id}:*`)
+        ]);
+        const deletePromises = [];
+        if (keysToDeleteSearch.length > 0) {
+            deletePromises.push(client.del(keysToDeleteSearch));
         };
+        if(keysToDeleteResource.length > 0){
+            deletePromises.push(client.del(keysToDeleteResource));
+        }
+        if(deletePromises.length > 0){
+            await Promise.all(deletePromises);
+        }
         return newResource;
     } catch (err) {
         throw new Error("Error saving resource: ", err);
