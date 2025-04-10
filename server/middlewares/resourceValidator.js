@@ -52,7 +52,7 @@ const updateResourceParamSchema = joi.object({
 const deleteResourceParamSchema = joi.object({
     _id: joi.string()
         .required()
-        .pattern(new RegExp('/^[0-9a-fA-F]{24}$/')),
+        .pattern(new RegExp('^[0-9a-fA-F]{24}$')),
 });
 
 const searchResourcesSchema = joi.object({

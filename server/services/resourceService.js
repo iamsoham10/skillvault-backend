@@ -151,14 +151,32 @@ const deleteResource = async ({ _id, user_id }) => {
     if (!isOwner) {
         throw new Error("You do not have permission to delete this resource");
     }
+   try{
     const resourceToDelete = await Resource.findByIdAndDelete(_id);
-    Collection.findByIdAndUpdate(resourceToDelete.collection_id, {
-        $pull: { resources: _id }
-    });
     if (!resourceToDelete) {
         throw new Error("Resource does not exist");
     }
+    Collection.findByIdAndUpdate(resourceToDelete.collection_id, {
+        $pull: { resources: _id }
+    });
+    const [keysToDeleteSearch, keysToDeleteResource] = await Promise.all([
+        client.keys(`search;${user_id}:collection_id:${resource.collection_id}:*`),
+        client.keys(`resource:${user_id}:collection_id:${resource.collection_id}:*`)
+    ]);
+    const deletePromises = [];
+    if(keysToDeleteSearch.length > 0){
+        deletePromises.push(client.del(keysToDeleteSearch));
+    }
+    if(keysToDeleteResource.length > 0){
+        deletePromises.push(client.del(keysToDeleteResource));
+    }
+    if(deletePromises.length > 0){
+        await Promise.all(deletePromises);
+    }
     return true;
+   } catch(err){
+    throw new Error("Error deleting resource");
+   }
 }
 
 const searchResources = async ({ user_id, collection_id, search }) => {

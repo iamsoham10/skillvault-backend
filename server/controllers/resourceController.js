@@ -26,8 +26,9 @@ const updateResourceController = asyncHandler(async (req, res) => {
 });
 
 const deleteResourceController = asyncHandler(async (req, res) => {
+    const user_id = req.user.user_id;
     const { _id } = req.query;
-    await resourceService.deleteResource({ _id });
+    await resourceService.deleteResource({ _id, user_id });
     res.status(200).json({ success: true, message: "Resource deleted successfully" });
 });
 
