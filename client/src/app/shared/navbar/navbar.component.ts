@@ -5,6 +5,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { ImageUploadService } from '../../services/image-upload.service';
 import { jwtDecode } from 'jwt-decode';
 import { userData } from '../../models/user.interface';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,7 @@ import { userData } from '../../models/user.interface';
 export class NavbarComponent implements OnInit {
   private getImageService = inject(ImageUploadService);
   private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
   faSignOut = faSignOut;
   profileImageUrl: string = '';
 
@@ -34,6 +36,10 @@ export class NavbarComponent implements OnInit {
         console.log(err);
       },
     });
+  }
+
+  goToUpload() {
+    this.router.navigate(['/upload']);
   }
 
   ngOnInit(): void {
