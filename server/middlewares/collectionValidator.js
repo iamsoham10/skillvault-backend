@@ -22,7 +22,8 @@ const getCollectionsSchema = joi.object({
 });
 
 const shareCollectionSchema = joi.object({
-    user_id: joi.string()
+    email: joi.string()
+        .email()
         .required(),
 });
 

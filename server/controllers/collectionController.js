@@ -25,8 +25,8 @@ const deleteCollectionController = asyncHandler(async (req, res) => {
 
 const shareCollectionController = asyncHandler(async (req, res) => {
     const { collection_id, role } = req.query;
-    const { user_id } = req.body;
-    await collectionService.shareCollection({ collection_id, user_id, role });
+    const { email } = req.body;
+    await collectionService.shareCollection({ collection_id, email, role });
     res.status(200).json({ success: true, message: "Collection shared successfully" });
 });
 

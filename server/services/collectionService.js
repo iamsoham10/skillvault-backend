@@ -92,7 +92,12 @@ const deleteCollection = async ({ collection_id, user_id, _id }) => {
   }
 };
 
-const shareCollection = async ({ collection_id, user_id, role }) => {
+const shareCollection = async ({ collection_id, email, role }) => {
+  const shareWithUser = await User.findOne({email}).select("user_id");
+  const user_id = shareWithUser.user_id;
+  if(!shareWithUser) {
+    throw new Error("User not found");
+  }
   const collection = await Collection.findById(collection_id);
   if (!collection) {
     throw new Error("Collection does not exist");
@@ -100,8 +105,17 @@ const shareCollection = async ({ collection_id, user_id, role }) => {
   collection.sharedWith.push({ user_id, role });
   try {
     await collection.save();
+    const keysToDelete = await client.keys(`collections:${user_id}:*`);
+    if(keysToDelete.length > 0){
+      await client.del(keysToDelete);
+    }
+    const searchKeysToDelete = await client.keys(`search:${user_id}:*`);
+    if(searchKeysToDelete.length > 0){
+      await client.del(searchKeysToDelete);
+    }
     return collection;
   } catch (err) {
+    console.log(err);
     throw new Error("Error sharing collection");
   }
 };

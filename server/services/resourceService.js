@@ -35,7 +35,7 @@ const createResource = async ({ title, url, description, user_id, tags, collecti
     }
     const userHasPermission = await checkPermission(collection_id, user_id);
     if (!userHasPermission) {
-        throw new Error("You do not have permission to edit this resource");
+        throw new Error("You do not have permission to edit this collection");
     }
     try {
         await Promise.all([
@@ -44,9 +44,12 @@ const createResource = async ({ title, url, description, user_id, tags, collecti
                 $push: { resources: newResource._id }
             }),
         ]);
-        const [keysToDeleteSearch, keysToDeleteResource] = await Promise.all([
+        const currentUser_ID = findCollection.user_id;
+        const [keysToDeleteSearch, keysToDeleteResource, keysToDeleteCollectionEditor, keysToDeleteCollectionOwner] = await Promise.all([
             client.keys(`search:${user_id}:collection_id:${collection_id}:*`),
-            client.keys(`resource:${user_id}:collection_id:${collection_id}:*`)
+            client.keys(`resource:${user_id}:collection_id:${collection_id}:*`),
+            client.keys(`collections:${user_id}`),
+            client.keys(`collections:${currentUser_ID}`),
         ]);
         const deletePromises = [];
         if (keysToDeleteSearch.length > 0) {
