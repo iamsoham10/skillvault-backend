@@ -48,8 +48,8 @@ const createResource = async ({ title, url, description, user_id, tags, collecti
         const [keysToDeleteSearch, keysToDeleteResource, keysToDeleteCollectionEditor, keysToDeleteCollectionOwner] = await Promise.all([
             client.keys(`search:${user_id}:collection_id:${collection_id}:*`),
             client.keys(`resource:${user_id}:collection_id:${collection_id}:*`),
-            client.keys(`collections:${user_id}`),
-            client.keys(`collections:${currentUser_ID}`),
+            client.keys(`collections:${user_id}:*`),
+            client.keys(`collections:${currentUser_ID}:*`),
         ]);
         const deletePromises = [];
         if (keysToDeleteSearch.length > 0) {
@@ -57,6 +57,12 @@ const createResource = async ({ title, url, description, user_id, tags, collecti
         };
         if(keysToDeleteResource.length > 0){
             deletePromises.push(client.del(keysToDeleteResource));
+        };
+        if(keysToDeleteCollectionEditor.length > 0) {
+            deletePromises.push(client.del(keysToDeleteCollectionEditor));
+        };
+        if(keysToDeleteCollectionOwner.length > 0){
+            deletePromises.push(client.del(keysToDeleteCollectionOwner));
         }
         if(deletePromises.length > 0){
             await Promise.all(deletePromises);
@@ -100,25 +106,20 @@ const updateResource = async ({ _id, updates, user_id }) => {
     if (Object.keys(updates).length === 0) {
         throw new Error("No updates provided");
     }
-    // fetching resource to get the collection id
     const resource = await Resource.findById(_id).select("collection_id");
     if (!resource) {
         throw new Error("Resource does not exist");
     }
 
-    // find the collection in which the resource exists
     const fetchedCollection = await Collection.findOne({ resources: _id }).select("user_id sharedWith");
     if (!fetchedCollection) {
         throw new Error("Resource does not belong to any collection");
     }
     const checkUserPermission = async (fetchedCollection, user_id) => {
-        //check if user is owner
         if (fetchedCollection.user_id === user_id) {
             return true;
         }
-        // check if resource is shared with user
         const sharedAcess = fetchedCollection.sharedWith.find(share => share.user_id === user_id);
-        // check if user is editor or not
         return sharedAcess?.role === 'editor';
     }
     const hasPermission = await checkUserPermission(fetchedCollection, user_id);
