@@ -10,8 +10,12 @@ import { CollectionService } from '../../../services/collection.service';
 import { Collection } from '../../../models/collection.model';
 import { CommonModule, NgForOf } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCoffee, faShare, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { faEllipsisV } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCoffee,
+  faShare,
+  faTrash,
+  faEllipsisV,
+} from '@fortawesome/free-solid-svg-icons';
 import { Subject, takeUntil } from 'rxjs';
 import { SearchComponent } from './search/search.component';
 import { PaginationComponent } from '../../../shared/navbar/pagination/pagination.component';
@@ -19,6 +23,17 @@ import { AddCollectionComponent } from './add-collection/add-collection.componen
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { UserService } from '../../../services/user.service';
 import { Router } from '@angular/router';
+import { Popover } from 'primeng/popover';
+import { InputGroup } from 'primeng/inputgroup';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputTextModule } from 'primeng/inputtext';
+import { ButtonModule } from 'primeng/button';
+import { FormsModule } from '@angular/forms';
+import { Select } from 'primeng/select';
+
+interface Role {
+  type: string;
+}
 
 @Component({
   selector: 'app-collections',
@@ -30,6 +45,13 @@ import { Router } from '@angular/router';
     AddCollectionComponent,
     ProgressSpinnerModule,
     CommonModule,
+    Popover,
+    InputGroup,
+    InputGroupAddonModule,
+    InputTextModule,
+    ButtonModule,
+    Select,
+    FormsModule,
   ],
   templateUrl: './collections.component.html',
   styleUrl: './collections.component.css',
@@ -53,12 +75,17 @@ export class CollectionsComponent implements OnInit, OnDestroy {
 
   openMenu: string | null = null;
 
+  roles: Role[] | undefined;
+
+  selectedRole: Role | undefined;
+
   toggleMenu(title: string) {
     this.openMenu = this.openMenu === title ? null : title;
   }
 
   ngOnInit() {
     this.loadCollections();
+    this.roles = [{ type: 'Viewer' }, { type: 'Editor' }];
   }
 
   deleteCollection(collection: Collection) {
