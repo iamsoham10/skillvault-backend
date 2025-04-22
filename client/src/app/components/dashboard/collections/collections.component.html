@@ -68,6 +68,8 @@
                     <p-inputgroup styleClass="!mt-2">
                       <input
                         pInputText
+                        [(ngModel)]="shareEmail"
+                        required
                         type="email"
                         placeholder="Enter email of user"
                       />
@@ -84,7 +86,8 @@
                 <div class="text-center">
                   <p-button
                     styleClass="!bg-accent !text-white !px-5 !font-semibold !rounded-lg"
-                    (onClick)="shareCollection()"
+                    (onClick)="shareCollection(collection._id, shareEmail!, selectedRole?.type!)"
+                    [disabled]="!shareEmail || !selectedRole"
                   >
                     <fa-icon [icon]="faShare"></fa-icon>
                     <span class="font-primary">Share</span>
@@ -117,3 +120,4 @@
   [totalRecords]="totalRecords()"
   (pageChange)="loadPage($event)"
 ></app-pagination>
+<p-toast position="bottom-right" key="br" />

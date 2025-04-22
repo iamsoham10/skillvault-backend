@@ -30,6 +30,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
 import { Select } from 'primeng/select';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 interface Role {
   type: string;
@@ -52,7 +54,9 @@ interface Role {
     ButtonModule,
     Select,
     FormsModule,
+    ToastModule
   ],
+  providers: [MessageService],
   templateUrl: './collections.component.html',
   styleUrl: './collections.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,12 +76,14 @@ export class CollectionsComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private collectionsService = inject(CollectionService);
   private userService = inject(UserService);
+  private messageService = inject(MessageService);
 
   openMenu: string | null = null;
 
   roles: Role[] | undefined;
 
   selectedRole: Role | undefined;
+  shareEmail: string | null = null;
 
   toggleMenu(title: string) {
     this.openMenu = this.openMenu === title ? null : title;
@@ -113,8 +119,40 @@ export class CollectionsComponent implements OnInit, OnDestroy {
     this.openMenu = null;
   }
 
-  shareCollection() {
+    showBottomRightSuccess() {
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Collection shared successfully',
+      key: 'br',
+      life: 2000,
+    });
+  }
+  showBottomRightFailer() {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Failer',
+      detail: 'Collection sharing failed',
+      key: 'br',
+      life: 2000,
+    });
+  }
+
+  shareCollection(collection_id: string, shareUserEmail: string, role: string) {
     console.log('Share collection');
+    console.log(collection_id)
+    console.log(shareUserEmail);
+    console.log(role.toLowerCase());
+    this.collectionsService.shareCollection(shareUserEmail, collection_id, role.toLowerCase()).subscribe({
+      next: () => {
+        console.log('collection shared successfully with', shareUserEmail);
+        this.showBottomRightSuccess();
+      },
+      error: (err) => {
+        console.error('Error sharing collection:', err);
+        this.showBottomRightFailer();
+      }
+    });
     this.openMenu = null;
   }
 

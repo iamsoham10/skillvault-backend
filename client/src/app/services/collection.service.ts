@@ -53,4 +53,11 @@ export class CollectionService {
       `${environment.COLLECTION_API}remove-collection?collection_id=${collection_id}&_id=${user_id}`
     );
   }
+
+  shareCollection(shareUserEmail: string, collection_id: string, role: string): Observable<Object>{
+    return this.http.post(
+      `${environment.COLLECTION_API}share-collection?collection_id=${collection_id}&role=${role}`,
+      {email: shareUserEmail}
+    )
+  }
 }
