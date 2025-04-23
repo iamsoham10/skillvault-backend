@@ -3,6 +3,7 @@ const Collection = require('../models/Collection');
 const metadataService = require('../services/metadataService');
 const mongoose = require('mongoose');
 const client = require('../config/redisClient');
+const DEFAULT_THUMBNAIL = "https://getuikit.com/v2/docs/images/placeholder_600x400.svg";
 
 const createResource = async ({ title, url, description, user_id, tags, collection_id, domain, favicon, thumbnail }) => {
 
@@ -23,7 +24,7 @@ const createResource = async ({ title, url, description, user_id, tags, collecti
         collection_id,
         domain: metadata.domainName,
         favicon: metadata.faviconImage,
-        thumbnail: metadata.thumbnail
+        thumbnail: metadata.thumbnail || DEFAULT_THUMBNAIL,
     });
     const checkPermission = async (collection_id, user_id) => {
         // check if user is owner
