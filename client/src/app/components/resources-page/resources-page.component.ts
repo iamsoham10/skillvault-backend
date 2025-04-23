@@ -10,6 +10,11 @@ import { PaginationComponent } from '../../shared/navbar/pagination/pagination.c
 import { AddResourceComponent } from './add-resource/add-resource.component';
 import { SearchResourceComponent } from './search-resource/search-resource.component';
 import { RecommendationService } from '../../services/recommendation.service';
+import { DrawerModule } from 'primeng/drawer';
+import { ButtonModule } from 'primeng/button';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import { ResourceDrawerComponent } from './resource-drawer/resource-drawer.component';
 
 @Component({
   selector: 'app-resources-page',
@@ -20,6 +25,10 @@ import { RecommendationService } from '../../services/recommendation.service';
     PaginationComponent,
     AddResourceComponent,
     SearchResourceComponent,
+    DrawerModule,
+    ButtonModule,
+    FontAwesomeModule,
+    ResourceDrawerComponent,
   ],
   templateUrl: './resources-page.component.html',
   styleUrl: './resources-page.component.css',
@@ -34,6 +43,8 @@ export class ResourcesPageComponent implements OnInit {
   totalResources = signal(0);
   page = signal(1);
   limit = signal(10);
+  drawerVisible: boolean = false;
+  faEdit = faEdit;
   private destroy$ = new Subject<void>();
   private route = inject(ActivatedRoute);
   private resourceService = inject(ResourceService);
@@ -79,6 +90,11 @@ export class ResourcesPageComponent implements OnInit {
           this.recommendedResources.set(response.data.recommendations);
         },
       });
+  }
+
+  openResourceDrawer(resource: Resource) {
+    this.drawerVisible = true;
+    console.log(resource);
   }
 
   ngOnInit(): void {
