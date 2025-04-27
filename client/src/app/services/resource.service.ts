@@ -48,4 +48,21 @@ export class ResourceService {
       resourceData
     );
   }
+
+  updateResource(
+    editData: {
+      title?: string;
+      url?: string;
+      description?: string;
+      tags?: Array<string>;
+    },
+    resource_id: string
+  ): Observable<Object> {
+    return this.http.put(
+      `${environment.RESOURCE_API}update-resource?_id=${resource_id}`,
+      editData
+    );
+  }
+
+  deleteResource() {}
 }

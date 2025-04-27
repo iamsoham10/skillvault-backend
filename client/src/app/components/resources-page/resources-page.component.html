@@ -72,7 +72,9 @@
           <p class="text-sm">{{ resource.domain }}</p>
         </div>
       </div>
-      <p class="text-sm text-gray-400 pl-2">{{ resource.description }}</p>
+      <p class="text-sm text-gray-400 pl-2 line-clamp-1">
+        {{ resource.description }}
+      </p>
       <!-- Inside your *ngFor resource card, after the image/title block -->
       <div
         class="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pt-2"
@@ -108,5 +110,9 @@
   position="right"
   styleClass="!w-full md:!w-80 lg:!w-[30rem] !bg-gray-900 !border-none !text-text"
 >
-  <app-resource-drawer></app-resource-drawer>
+  <app-resource-drawer
+    [resource]="selectedResource"
+    (saveResource)="onSaveResource($event)"
+    (deleteResource)="onDeleteResource()"
+  ></app-resource-drawer>
 </p-drawer>

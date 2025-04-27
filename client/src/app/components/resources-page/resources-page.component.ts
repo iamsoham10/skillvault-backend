@@ -44,6 +44,7 @@ export class ResourcesPageComponent implements OnInit {
   page = signal(1);
   limit = signal(10);
   drawerVisible: boolean = false;
+  selectedResource: Resource | null = null;
   faEdit = faEdit;
   private destroy$ = new Subject<void>();
   private route = inject(ActivatedRoute);
@@ -93,8 +94,30 @@ export class ResourcesPageComponent implements OnInit {
   }
 
   openResourceDrawer(resource: Resource) {
+    this.selectedResource = resource;
     this.drawerVisible = true;
     console.log(resource);
+  }
+
+  onSaveResource(changes: any) {
+    this.resourceService
+      .updateResource(changes, this.selectedResource!._id)
+      .subscribe({
+        next: (response) => {
+          console.log('resource updated successfully');
+          console.log(response);
+          this.drawerVisible = false;
+          this.loadResources(this.collection_ID!);
+        },
+        error: (err) => {
+          console.log('Error updating resource');
+          this.drawerVisible = false;
+        },
+      });
+  }
+
+  onDeleteResource() {
+    console.log('deleting the resource');
   }
 
   ngOnInit(): void {

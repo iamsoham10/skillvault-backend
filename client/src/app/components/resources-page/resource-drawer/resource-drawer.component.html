@@ -1,29 +1,32 @@
-<form>
+<form [formGroup]="resourceForm" (ngSubmit)="onSave()">
   <label class="block mb-2">Title:</label>
-  <input name="title" class="mb-4 w-full p-2 rounded text-black" />
+  <input formControlName="title" class="mb-4 w-full p-2 rounded text-black" />
 
   <label class="block mb-2">URL:</label>
-  <input name="url" class="mb-4 w-full p-2 rounded text-black" />
+  <input formControlName="url" class="mb-4 w-full p-2 rounded text-black" />
 
   <label class="block mb-2">Description:</label>
   <textarea
-    name="description"
+    formControlName="description"
     class="mb-4 w-full p-2 rounded text-black"
   ></textarea>
 
   <label class="block mb-2">Tags (comma separated):</label>
-  <input name="tags" class="mb-4 w-full p-2 rounded text-black" />
+  <input formControlName="tags" class="mb-4 w-full p-2 rounded text-black" />
 
-  <div class="flex gap-2 mt-4">
-    <button type="button" class="bg-accent text-white px-7 py-2 rounded">
+  <div class="flex gap-16 mt-4">
+    <button
+      type="submit"
+      class="flex-1 bg-accent text-white px-7 py-2 rounded active:scale-95 transition-transform"
+    >
       Save
     </button>
     <button
       type="button"
-      (click)="cancel.emit()"
-      class="bg-gray-400 text-white px-7 py-2 rounded"
+      (click)="onDelete()"
+      class="flex-1 bg-accent text-white px-7 py-2 rounded active:scale-95 transition-transform"
     >
-      Cancel
+      Delete
     </button>
   </div>
 </form>
