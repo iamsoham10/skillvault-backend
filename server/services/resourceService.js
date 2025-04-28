@@ -135,6 +135,10 @@ const updateResource = async ({ _id, updates, user_id }) => {
     if (keysToUpdate.length > 0) {
         await client.del(keysToUpdate);
     };
+    const keysToDeleteSearch = await client.keys(`search:${user_id}:collection_id:${resource.collection_id}:*`);
+    if(keysToDeleteSearch.length > 0) {
+        await client.del(keysToDeleteSearch);
+    }
     return updateResource;
 }
 
@@ -165,7 +169,7 @@ const deleteResource = async ({ _id, user_id }) => {
         $pull: { resources: _id }
     });
     const [keysToDeleteSearch, keysToDeleteResource] = await Promise.all([
-        client.keys(`search;${user_id}:collection_id:${resource.collection_id}:*`),
+        client.keys(`search:${user_id}:collection_id:${resource.collection_id}:*`),
         client.keys(`resource:${user_id}:collection_id:${resource.collection_id}:*`)
     ]);
     const deletePromises = [];
@@ -190,7 +194,7 @@ const searchResources = async ({ user_id, collection_id, search }) => {
     if (cachedSearchResource) {
         return JSON.parse(cachedSearchResource);
     }
-    const query = { user_id, collection_id };
+    const query = { collection_id };
     if (search) {
         query.$text = { $search: search };
     }
