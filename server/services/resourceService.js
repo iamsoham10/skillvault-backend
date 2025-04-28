@@ -165,9 +165,12 @@ const deleteResource = async ({ _id, user_id }) => {
     if (!resourceToDelete) {
         throw new Error("Resource does not exist");
     }
-    Collection.findByIdAndUpdate(resourceToDelete.collection_id, {
+    const deleteResourceID = await Collection.findByIdAndUpdate(resourceToDelete.collection_id, {
         $pull: { resources: _id }
     });
+    if (!deleteResourceID) {
+        throw new Error("Resource does not exist");
+    }
     const [keysToDeleteSearch, keysToDeleteResource] = await Promise.all([
         client.keys(`search:${user_id}:collection_id:${resource.collection_id}:*`),
         client.keys(`resource:${user_id}:collection_id:${resource.collection_id}:*`)
