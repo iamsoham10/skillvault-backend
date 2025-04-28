@@ -118,13 +118,24 @@ export class ResourcesPageComponent implements OnInit {
         error: (err) => {
           console.log('Error updating resource');
           this.drawerVisible = false;
-          this.showToast('error', 'Failure to update resource');
+          this.showToast('error', 'Failed to update resource');
         },
       });
   }
 
   onDeleteResource() {
-    console.log('deleting the resource');
+    const resource_id = this.selectedResource!._id;
+    this.resourceService.deleteResource(resource_id).subscribe({
+      next: (response) => {
+        this.drawerVisible = false;
+        this.showToast('success', 'Resource deleted successfully');
+        this.loadResources(this.collection_ID!);
+      },
+      error: (err) => {
+        this.drawerVisible = false;
+        this.showToast('error', 'Failed to delete resource');
+      }
+    });
   }
 
   private showToast(severity: 'success' | 'error', detail: string) {

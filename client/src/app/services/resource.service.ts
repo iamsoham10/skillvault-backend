@@ -64,5 +64,7 @@ export class ResourceService {
     );
   }
 
-  deleteResource() {}
+  deleteResource(resource_id: string) {
+    return this.http.delete(`${environment.RESOURCE_API}delete-resource?_id=${resource_id}`);
+  }
 }
