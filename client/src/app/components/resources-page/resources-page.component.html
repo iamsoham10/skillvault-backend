@@ -104,6 +104,38 @@
     (pageChange)="loadPage($event)"
   ></app-pagination>
 </div>
+<!-- Recommended Resources Section -->
+<div class="px-4 md:px-24 py-12 bg-slate-800">
+  <h2 class="text-2xl md:text-3xl font-bold mb-8 text-accent">Recommended for You</h2>
+  <button class="px-4 py-2 bg-accent text-text rounded-md hover:opacity-80 active:scale-95 transition-all mb-8"
+  (click)="fetchRecommendations()"
+  >Get Recommendations</button>
+  <div *ngIf="isRecommendationsLoading()" class="text-center">
+    <p-progress-spinner
+      strokeWidth="8"
+      fill="transparent"
+      animationDuration=".5s"
+      [style]="{ width: '25px', height: '25px' }"
+    />
+  </div>
+  <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div
+      *ngFor="let rec of recommendedResources()"
+      class="bg-subbackground hover:opacity-80 transition-colors p-6 rounded-2xl shadow-md flex flex-col justify-between"
+    >
+      <a
+        [href]="rec.link"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="block text-lg md:text-xl font-semibold text-text hover:underline hover:text-accent transition-colors mb-4"
+      >
+        {{ rec.title }}
+      </a>
+    </div>
+  </div>
+</div>
+
+
 <p-drawer
   header="Edit Resource"
   [(visible)]="drawerVisible"

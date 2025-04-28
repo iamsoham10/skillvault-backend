@@ -31,7 +31,7 @@ import { ToastModule } from 'primeng/toast';
     ButtonModule,
     FontAwesomeModule,
     ResourceDrawerComponent,
-    ToastModule
+    ToastModule,
   ],
   providers: [MessageService],
   templateUrl: './resources-page.component.html',
@@ -39,14 +39,13 @@ import { ToastModule } from 'primeng/toast';
 })
 export class ResourcesPageComponent implements OnInit {
   userResources = signal<Resource[] | undefined>(undefined);
-  recommendedResources = signal<
-    [[{ title: string; link: string }]] | undefined
-  >(undefined);
+  recommendedResources = signal<{ title: string; link: string }[] | undefined>(undefined);
   collection_ID: string | null = null;
   isResourcesLoading = signal(false);
   totalResources = signal(0);
   page = signal(1);
   limit = signal(10);
+  isRecommendationsLoading = signal(false);
   drawerVisible: boolean = false;
   selectedResource: Resource | null = null;
   faEdit = faEdit;
@@ -88,13 +87,20 @@ export class ResourcesPageComponent implements OnInit {
   }
 
   fetchRecommendations() {
+    this.isRecommendationsLoading.set(true);
     this.recommendationService
       .getRecommendations(this.collection_ID!)
       .subscribe({
         next: (response) => {
+          this.isRecommendationsLoading.set(false);
           console.log(response);
-          this.recommendedResources.set(response.data.recommendations);
+          const flattened = response.data.recommendations.flat();
+          this.recommendedResources.set(flattened);
         },
+        error: (err) => {
+          this.isRecommendationsLoading.set(false);
+          console.log(err);
+        }
       });
   }
 
@@ -134,7 +140,7 @@ export class ResourcesPageComponent implements OnInit {
       error: (err) => {
         this.drawerVisible = false;
         this.showToast('error', 'Failed to delete resource');
-      }
+      },
     });
   }
 
