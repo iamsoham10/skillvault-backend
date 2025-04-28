@@ -15,6 +15,8 @@ import { ButtonModule } from 'primeng/button';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { ResourceDrawerComponent } from './resource-drawer/resource-drawer.component';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-resources-page',
@@ -29,7 +31,9 @@ import { ResourceDrawerComponent } from './resource-drawer/resource-drawer.compo
     ButtonModule,
     FontAwesomeModule,
     ResourceDrawerComponent,
+    ToastModule
   ],
+  providers: [MessageService],
   templateUrl: './resources-page.component.html',
   styleUrl: './resources-page.component.css',
 })
@@ -50,6 +54,7 @@ export class ResourcesPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private resourceService = inject(ResourceService);
   private recommendationService = inject(RecommendationService);
+  private messageService = inject(MessageService);
 
   loadResources(collection_ID: string): void {
     this.isResourcesLoading.set(true);
@@ -107,17 +112,29 @@ export class ResourcesPageComponent implements OnInit {
           console.log('resource updated successfully');
           console.log(response);
           this.drawerVisible = false;
+          this.showToast('success', 'Resource updated successfully');
           this.loadResources(this.collection_ID!);
         },
         error: (err) => {
           console.log('Error updating resource');
           this.drawerVisible = false;
+          this.showToast('error', 'Failure to update resource');
         },
       });
   }
 
   onDeleteResource() {
     console.log('deleting the resource');
+  }
+
+  private showToast(severity: 'success' | 'error', detail: string) {
+    this.messageService.add({
+      severity,
+      summary: severity === 'success' ? 'Success' : 'Error',
+      detail,
+      key: 'br',
+      life: 2000,
+    });
   }
 
   ngOnInit(): void {
