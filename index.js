@@ -15,9 +15,18 @@ const app = express();
 app.use(cookieParser());
 const PORT = process.env.PORT || 5000;
 
+const allowedOrigins = [
+  "http://localhost:4200",
+  "https://skillvault-six.vercel.app",
+];
 app.use(
   cors({
-    origin: "http://localhost:4200",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
