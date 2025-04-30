@@ -39,4 +39,4 @@
 
 | Frontend   | Backend           | Database | AI Engine               |
 | ---------- | ----------------- | -------- | ----------------------- |
-| Angular 19 | Node.js + Express | MongoDB  | Python + Flask (TF-IDF) |
+| Angular 19 | Bun + Express     | MongoDB  | Python + Flask (TF-IDF) |
