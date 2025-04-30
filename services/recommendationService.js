@@ -27,7 +27,7 @@ router.post('/send-resources', async (req, res) => {
             return res.status(404).json({ success: false, message: "Collection not found" });
         }
         const collectionResources = await Resource.find({ _id: { $in: fetchCollection.resources } }).select("_id title description tags")
-        const response = await axios.post('http://127.0.0.1:5000/accept-resources', {
+        const response = await axios.post('https://skillvault-recommendations-service.onrender.com/accept-resources', {
             userResources: collectionResources,
             DBResources: allDbResources
         });
