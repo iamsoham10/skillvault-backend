@@ -32,6 +32,7 @@ app.use(
 );
 app.use(helmet());
 app.use(express.json());
+app.set("trust proxy", 1); // trust first proxy
 
 connectToDB();
 
