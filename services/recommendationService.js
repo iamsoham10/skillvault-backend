@@ -4,9 +4,15 @@ const Resource = require('../models/Resource');
 const Collection = require('../models/Collection');
 const router = express.Router();
 
+const axiosInstance = axios.create({
+  headers: {
+    'Accept-Encoding': 'gzip, deflate' // ❌ exclude Brotli
+  }
+});
+
 router.get('/demo-flask', async (req, res) => {
     try {
-        const response = await axios.get('http://127.0.0.1:5000/hello');
+        const response = await axiosInstance.get('http://127.0.0.1:5000/hello');
         res.status(200).json({ success: true, message: "Flask API called", data: response.data });
     } catch (err) {
         throw new Error('Could not call Flask API');
@@ -27,7 +33,7 @@ router.post('/send-resources', async (req, res) => {
             return res.status(404).json({ success: false, message: "Collection not found" });
         }
         const collectionResources = await Resource.find({ _id: { $in: fetchCollection.resources } }).select("_id title description tags")
-        const response = await axios.post('https://skillvault-recommendations-service.onrender.com/accept-resources', {
+        const response = await axiosInstance.post('https://skillvault-recommendations-service.onrender.com/accept-resources', {
             userResources: collectionResources,
             DBResources: allDbResources
         });
