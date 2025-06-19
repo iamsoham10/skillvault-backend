@@ -46,26 +46,26 @@ const createResource = async ({ title, url, description, user_id, tags, collecti
             }),
         ]);
         const currentUser_ID = findCollection.user_id;
-        const [keysToDeleteSearch, keysToDeleteResource, keysToDeleteCollectionEditor, keysToDeleteCollectionOwner] = await Promise.all([
-            client.keys(`search:${user_id}:collection_id:${collection_id}:*`),
-            client.keys(`resource:${user_id}:collection_id:${collection_id}:*`),
-            client.keys(`collections:${user_id}:*`),
-            client.keys(`collections:${currentUser_ID}:*`),
-        ]);
+        const allUserIds = [
+            findCollection.user_id,
+            ...findCollection.sharedWith.map(shared => shared.user_id)
+        ];
         const deletePromises = [];
-        if (keysToDeleteSearch.length > 0) {
-            deletePromises.push(client.del(keysToDeleteSearch));
-        };
-        if(keysToDeleteResource.length > 0){
-            deletePromises.push(client.del(keysToDeleteResource));
-        };
-        if(keysToDeleteCollectionEditor.length > 0) {
-            deletePromises.push(client.del(keysToDeleteCollectionEditor));
-        };
-        if(keysToDeleteCollectionOwner.length > 0){
-            deletePromises.push(client.del(keysToDeleteCollectionOwner));
+        for (const uid of allUserIds) {
+            const resourceKeys = await client.keys(`resource:${uid}:collection_id:${collection_id}:*`);
+            if (resourceKeys.length > 0) {
+                deletePromises.push(client.del(resourceKeys));
+            }
+            const searchKeys = await client.keys(`search:${uid}:collection_id:${collection_id}:*`);
+            if (searchKeys.length > 0) {
+                deletePromises.push(client.del(searchKeys));
+            }
+            const collectionKeys = await client.keys(`collections:${uid}:*`);
+            if (collectionKeys.length > 0) {
+                deletePromises.push(client.del(collectionKeys));
+            }
         }
-        if(deletePromises.length > 0){
+        if (deletePromises.length > 0) {
             await Promise.all(deletePromises);
         }
         return newResource;
